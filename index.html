@@ -1,0 +1,1175 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Três Lentes do Risco Biológico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: trilha sequencial em estações; uma estação por vez, barra de estações fixa no topo,
+   caixas por função (conceito, caderno, trecho normativo, atividade), coluna de leitura ~70ch. */
+:root{
+  --bg:#f2f5f3; --surface:#ffffff; --ink:#15221e; --muted:#566660; --line:#d3dcd7;
+  --accent:#0d6a5a; --accent-soft:#e1f0ec;
+  --caderno:#9a6414; --caderno-bg:#fbf2df; --caderno-line:#ead3a6;
+  --norma-bg:#edf1f6; --norma-line:#c8d3e0; --norma-ink:#1d2a3a;
+  --ok:#23703a; --ok-bg:#e3f2e7; --warn:#98580a; --warn-bg:#fbeedb; --bad:#a3261c; --bad-bg:#f9e4e1;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --f-norma:"Literata",Georgia,"Times New Roman",serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0e1513; --surface:#15201c; --ink:#e2ebe7; --muted:#9bada6; --line:#2a3934;
+  --accent:#4dbfa7; --accent-soft:#16312b;
+  --caderno:#e2aa4c; --caderno-bg:#2a2213; --caderno-line:#4a3a1c;
+  --norma-bg:#161f2a; --norma-line:#2c3a4c; --norma-ink:#d7e0ea;
+  --ok:#6fcf8a; --ok-bg:#15301f; --warn:#e8a64f; --warn-bg:#32240f; --bad:#f08a80; --bad-bg:#3a1a17;
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0e1513; --surface:#15201c; --ink:#e2ebe7; --muted:#9bada6; --line:#2a3934;
+  --accent:#4dbfa7; --accent-soft:#16312b;
+  --caderno:#e2aa4c; --caderno-bg:#2a2213; --caderno-line:#4a3a1c;
+  --norma-bg:#161f2a; --norma-line:#2c3a4c; --norma-ink:#d7e0ea;
+  --ok:#6fcf8a; --ok-bg:#15301f; --warn:#e8a64f; --warn-bg:#32240f; --bad:#f08a80; --bad-bg:#3a1a17;
+  color-scheme:dark }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.2;text-wrap:balance;margin:0}
+p{margin:0}
+.wrap{max-width:860px;margin:0 auto;padding-inline:20px}
+
+/* Cabeçalho */
+.topo{padding-block:28px 18px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.topo h1{font-size:clamp(28px,5vw,42px);font-weight:800;margin-top:6px;letter-spacing:-.01em}
+.topo .sub{color:var(--muted);margin-top:8px;max-width:62ch}
+.lentes{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.lente{font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px}
+.lente b{font-family:var(--f-mono);color:var(--accent);margin-right:4px}
+
+/* Barra de estações */
+.barra{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);border-bottom:1px solid var(--line)}
+.barra .wrap{display:flex;gap:6px;overflow-x:auto;padding-block:10px;scrollbar-width:thin}
+.chip{flex:0 0 auto;display:flex;align-items:center;gap:6px;font:600 14px var(--f-body);color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+.chip .n{font-family:var(--f-mono);font-size:12px;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line)}
+.chip[aria-current="step"]{color:var(--ink);border-color:var(--accent);box-shadow:inset 0 -3px 0 var(--accent)}
+.chip.feita .n{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.progresso{height:4px;background:var(--line)}
+.progresso i{display:block;height:100%;background:var(--accent);width:0;transition:width .4s}
+
+/* Estação */
+main{padding-block:26px 60px}
+.estacao{display:flex;flex-direction:column;gap:22px}
+.est-cab{display:flex;flex-direction:column;gap:6px}
+.est-cab h2{font-size:clamp(24px,4vw,32px);font-weight:800}
+.est-cab .meta{color:var(--muted);font-size:15px}
+.estacao h3{font-size:20px;font-weight:700;margin-top:10px}
+.estacao > p, .texto p{max-width:70ch}
+.texto{display:flex;flex-direction:column;gap:12px}
+ul.lista,ol.lista{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px;max-width:68ch}
+
+/* Caixas por função */
+.conceito{background:var(--accent-soft);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.conceito .rot,.caderno .rot,.atividade .rot,.alerta .rot{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.conceito .rot{color:var(--accent)}
+.conceito dl{margin:0;display:grid;gap:8px}
+.conceito dt{font-weight:700}
+.conceito dd{margin:0}
+
+.caderno{background:var(--caderno-bg);border:1px dashed var(--caderno-line);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:10px;
+  background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 27px,var(--caderno-line) 27px,var(--caderno-line) 28px);background-position:0 12px}
+.caderno .rot{color:var(--caderno)}
+.caderno .cod{font-family:var(--f-mono);font-weight:600;color:var(--caderno)}
+.caderno ol,.caderno ul{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.anotei{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:15px;cursor:pointer;align-self:flex-start;background:var(--surface);border:1px solid var(--caderno-line);border-radius:6px;padding:4px 10px}
+.anotei input{width:18px;height:18px;accent-color:var(--caderno)}
+
+details.norma{background:var(--norma-bg);border:1px solid var(--norma-line);border-radius:var(--r)}
+details.norma summary{cursor:pointer;padding:12px 16px;font-weight:700;display:flex;gap:10px;align-items:baseline;list-style:none}
+details.norma summary::-webkit-details-marker{display:none}
+details.norma summary::before{content:"§";font-family:var(--f-norma);color:var(--accent);font-size:20px;line-height:1}
+details.norma summary .fonte{font-weight:400;color:var(--muted);font-size:14px;margin-left:auto;text-align:right}
+details.norma[open] summary{border-bottom:1px solid var(--norma-line)}
+.norma-corpo{padding:14px 18px 16px;font-family:var(--f-norma);color:var(--norma-ink);font-size:16px;line-height:1.65;display:flex;flex-direction:column;gap:8px}
+.norma-corpo .inc{padding-left:1.4em}
+.norma-corpo .inc2{padding-left:2.8em}
+.norma-corpo mark{background:transparent;border-bottom:2px solid var(--caderno);color:inherit;padding:0 1px}
+.norma-corpo .link{font-family:var(--f-body);font-size:14px;margin-top:4px}
+.norma-corpo .obs{font-family:var(--f-body);font-size:14px;color:var(--muted);font-style:italic}
+
+.atividade{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:14px}
+.atividade .rot{color:var(--accent)}
+.atividade h4{font-size:18px}
+.alerta{border-left:4px solid var(--warn);background:var(--warn-bg);border-radius:0 var(--r) var(--r) 0;padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.alerta .rot{color:var(--warn)}
+
+/* Questões */
+.q{display:flex;flex-direction:column;gap:8px}
+.q .enun{font-weight:600}
+.opc{display:flex;flex-direction:column;gap:6px}
+.opc label{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;background:var(--surface)}
+.opc label:hover{border-color:var(--accent)}
+.opc input{margin-top:5px;accent-color:var(--accent);flex:0 0 auto}
+.opc label.sel.certo{border-color:var(--ok);background:var(--ok-bg)}
+.opc label.sel.parcial{border-color:var(--warn);background:var(--warn-bg)}
+.opc label.sel.errado{border-color:var(--bad);background:var(--bad-bg)}
+.fb{font-size:15px;border-radius:8px;padding:10px 12px;border:1px solid var(--line)}
+.fb b{display:block;margin-bottom:2px}
+.fb.certo{background:var(--ok-bg);border-color:var(--ok)} .fb.certo b{color:var(--ok)}
+.fb.parcial{background:var(--warn-bg);border-color:var(--warn)} .fb.parcial b{color:var(--warn)}
+.fb.errado{background:var(--bad-bg);border-color:var(--bad)} .fb.errado b{color:var(--bad)}
+
+.btn{font:600 15px var(--f-body);border-radius:8px;padding:9px 16px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:var(--surface);align-self:flex-start}
+.btn.sec{background:var(--surface);color:var(--accent)}
+.btn:disabled{opacity:.5;cursor:default}
+.resp{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:8px}
+.resp .rot2{font-weight:700;color:var(--accent)}
+
+/* Associação */
+.assoc{display:flex;flex-direction:column;gap:10px}
+.assoc-item{display:grid;grid-template-columns:1fr minmax(170px,240px);gap:10px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:10px}
+.assoc-item select{font:15px var(--f-body);padding:6px 8px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%}
+.assoc-item.ok select{border-color:var(--ok);background:var(--ok-bg)}
+.assoc-item.no select{border-color:var(--bad);background:var(--bad-bg)}
+@media (max-width:560px){.assoc-item{grid-template-columns:1fr}}
+
+/* Tabelas */
+.tab{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:15px;min-width:560px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font-family:var(--f-display);font-weight:700;font-size:14px;background:var(--accent-soft)}
+tr:last-child td{border-bottom:0}
+td code,.cid{font-family:var(--f-mono);font-size:13px;white-space:nowrap}
+td.sim{color:var(--ok);font-weight:700} td.nao{color:var(--bad);font-weight:700}
+
+/* Quadro das três lentes */
+.quadro{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.quadro > div{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.quadro .l{font-family:var(--f-mono);font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.quadro h4{font-size:16px}
+.quadro p{font-size:14px;color:var(--muted)}
+@media (max-width:640px){.quadro{grid-template-columns:1fr}}
+
+/* Fluxo do nexo */
+.fluxo{display:flex;flex-direction:column;gap:0}
+.passo{display:grid;grid-template-columns:36px 1fr;gap:12px}
+.passo .bola{width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--surface);display:grid;place-items:center;font:600 13px var(--f-mono);position:relative}
+.passo:not(:last-child) .trilho{border-left:2px solid var(--line);margin-left:14px;height:calc(100% - 30px)}
+.passo .conteudo{padding-bottom:16px;display:flex;flex-direction:column;gap:4px}
+.passo h4{font-size:16px}
+
+/* Calculadora FAP */
+.calc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.calc label{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:600}
+.calc input,.calc select{font:16px var(--f-mono);padding:7px 9px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%}
+.saida{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.saida div{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--bg)}
+.saida span{display:block;font-size:13px;color:var(--muted)}
+.saida strong{font:600 20px var(--f-mono);font-variant-numeric:tabular-nums}
+@media (max-width:640px){.calc,.saida{grid-template-columns:1fr}}
+
+/* Casos */
+.caso{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.caso > summary{cursor:pointer;list-style:none;padding:14px 16px;display:flex;gap:12px;align-items:center}
+.caso > summary::-webkit-details-marker{display:none}
+.caso .num{font:600 13px var(--f-mono);color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:2px 7px;flex:0 0 auto}
+.caso .tit{font-weight:700;flex:1}
+.caso .st{font-size:13px;color:var(--muted);flex:0 0 auto}
+.caso[open] > summary{border-bottom:1px solid var(--line)}
+.caso-corpo{padding:16px;display:flex;flex-direction:column;gap:16px}
+.cenario{font-style:italic;max-width:70ch}
+
+/* Ficha de ambiente (dados para interpretação) */
+.ficha{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.ficha h4{background:var(--accent-soft);padding:10px 14px;font-size:15px}
+.ficha dl{margin:0;display:grid;grid-template-columns:minmax(120px,220px) 1fr}
+.ficha dt,.ficha dd{margin:0;padding:8px 14px;border-top:1px solid var(--line);font-size:15px}
+.ficha dt{font-weight:700;color:var(--muted)}
+@media (max-width:560px){.ficha dl{grid-template-columns:1fr}.ficha dd{border-top:0;padding-top:0}}
+
+/* Navegação inferior */
+.nav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:18px;margin-top:10px}
+.rodape{color:var(--muted);font-size:13px;padding-block:0 30px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+
+<header class="topo wrap">
+  <p class="eyebrow">Especialização Técnica em Higiene Ocupacional · Trilha autoinstrucional</p>
+  <h1>Três Lentes do Risco Biológico</h1>
+  <p class="sub">A mesma exposição a agentes biológicos pode gerar três consequências jurídicas diferentes. Nesta trilha você aprende a separá-las, a ler as normas que sustentam cada uma e a produzir a prova técnica que o higienista ocupacional assina.</p>
+  <div class="lentes" aria-label="As três lentes">
+    <span class="lente"><b>L1</b>Insalubridade · NR-15, Anexo 14</span>
+    <span class="lente"><b>L2</b>Aposentadoria especial · Decreto 3.048, Anexo IV</span>
+    <span class="lente"><b>L3</b>Doença ocupacional · Decreto 3.048, Anexo II</span>
+  </div>
+</header>
+
+<nav class="barra" aria-label="Estações da trilha">
+  <div class="wrap" id="chips"></div>
+  <div class="progresso" aria-hidden="true"><i id="barraProg"></i></div>
+</nav>
+
+<main class="wrap">
+
+<!-- ===================== ESTAÇÃO 0 ===================== -->
+<section class="estacao" data-titulo="Partida" id="e0">
+  <div class="est-cab">
+    <p class="eyebrow">Estação 0 · Partida · cerca de 20 min</p>
+    <h2>Um acidente, três perguntas</h2>
+    <p class="meta">Prepare o caderno, conheça o caso que vai acompanhar você até o fim e registre o que já sabe.</p>
+  </div>
+
+  <div class="texto">
+    <h3>Como usar esta trilha</h3>
+    <ul class="lista">
+      <li>Siga as estações em ordem. Cada uma termina com um botão para a próxima; a barra no topo mostra onde você está.</li>
+      <li>As caixas <strong>amarelas pautadas</strong> são tarefas de caderno. Escreva à mão, com o código indicado (A1, A2…), e marque <em>Anotei</em> ao terminar. As anotações serão usadas no parecer final.</li>
+      <li>As caixas com <strong>§</strong> abrem o texto da norma, lei ou decreto. Leia o trecho antes de responder às atividades: o objetivo é você interpretar a fonte, não decorar respostas.</li>
+      <li>Nas atividades, cada alternativa tem um comentário. Leia o comentário mesmo quando acertar.</li>
+      <li>Seu avanço fica salvo neste navegador. Se trocar de computador, a trilha recomeça, mas o caderno continua com você.</li>
+    </ul>
+  </div>
+
+  <div class="caderno" data-bloco="A0">
+    <p class="rot">Caderno · preparação</p>
+    <p>Abra uma página dupla com o título <strong>Quadro das três lentes</strong> e divida-a em três colunas:</p>
+    <div class="quadro">
+      <div><span class="l">L1 · Trabalhista</span><h4>Insalubridade</h4><p>Quem paga, quanto, com base em quê, que documento prova.</p></div>
+      <div><span class="l">L2 · Previdenciária</span><h4>Aposentadoria especial</h4><p>Que exposição conta, por quanto tempo, que documento prova.</p></div>
+      <div><span class="l">L3 · Previdenciária / saúde</span><h4>Doença ocupacional</h4><p>Quando a doença é do trabalho, como se estabelece o nexo.</p></div>
+    </div>
+    <p>Você vai preencher esse quadro ao longo das estações. Ao final, ele será a sua ficha de consulta.</p>
+    <label class="anotei"><input type="checkbox" data-key="A0"> Anotei</label>
+  </div>
+
+  <h3>O caso-âncora</h3>
+  <div class="ficha">
+    <h4>Caso Márcia · técnica de enfermagem</h4>
+    <dl>
+      <dt>Local</dt><dd>Enfermaria de clínica médica de um hospital geral (não é unidade de isolamento).</dd>
+      <dt>Tarefas</dt><dd>Administração de medicamentos, punção venosa, curativos, coleta de sangue, banho no leito.</dd>
+      <dt>Evento</dt><dd>Ao descartar uma agulha em caixa coletora acima da linha de enchimento, perfurou o dedo. A paciente-fonte tinha hepatite B.</dd>
+      <dt>Histórico</dt><dd>Esquema vacinal contra hepatite B incompleto (duas doses). Não houve emissão de CAT na data do acidente.</dd>
+      <dt>Desfecho</dt><dd>Quatro meses depois, diagnóstico de hepatite B aguda, com afastamento de 40 dias.</dd>
+    </dl>
+  </div>
+
+  <div class="caderno" data-bloco="A1">
+    <p class="rot">Caderno · <span class="cod">A1</span> · diagnóstico inicial</p>
+    <p>Sem consultar nada, responda com o que você sabe hoje. Não há resposta certa nesta etapa: você vai comparar com o que escreverá no fim.</p>
+    <ol>
+      <li>Márcia tem direito a adicional de insalubridade? Em que grau?</li>
+      <li>O tempo trabalhado por ela conta como especial para aposentadoria?</li>
+      <li>A hepatite B dela é doença ocupacional? O que deveria ter sido feito na data do acidente?</li>
+      <li>Qual profissional assina o documento que prova cada uma dessas situações?</li>
+    </ol>
+    <label class="anotei"><input type="checkbox" data-key="A1"> Anotei</label>
+  </div>
+
+  <div class="conceito">
+    <p class="rot">Conceito central</p>
+    <p>As três lentes pertencem a <strong>regimes jurídicos distintos</strong>, com listas, critérios e documentos próprios. Uma atividade pode ser insalubre e não gerar aposentadoria especial; uma doença pode ser reconhecida como ocupacional sem que o posto seja insalubre. Confundir as lentes é o erro mais frequente em laudos e pareceres.</p>
+  </div>
+
+  <div class="nav"><span></span><button class="btn" data-ir="1">Ir para a Estação 1 →</button></div>
+</section>
+
+<!-- ===================== ESTAÇÃO 1 ===================== -->
+<section class="estacao" data-titulo="Do agente à doença" id="e1" hidden>
+  <div class="est-cab">
+    <p class="eyebrow">Estação 1 · Do agente à doença · cerca de 35 min</p>
+    <h2>Do agente à doença: o Anexo II do Decreto 3.048</h2>
+    <p class="meta">Antes de falar em adicional ou aposentadoria, é preciso saber quais doenças a legislação associa ao trabalho e a quais exposições.</p>
+  </div>
+
+  <div class="texto">
+    <p>O Decreto 3.048/1999 é o Regulamento da Previdência Social. O seu <strong>Anexo II</strong> relaciona os agentes patogênicos causadores de doenças profissionais ou do trabalho. Ele é organizado em três listas, que se leem em direções diferentes:</p>
+  </div>
+
+  <div class="tab"><table>
+    <thead><tr><th>Lista</th><th>Direção de leitura</th><th>Para que serve</th></tr></thead>
+    <tbody>
+      <tr><td><strong>A</strong></td><td>Agente → doenças</td><td>Parte do agente (ex.: item XXV, microrganismos e parasitas infecciosos vivos e seus produtos tóxicos) e indica as doenças que ele pode causar.</td></tr>
+      <tr><td><strong>B</strong></td><td>Doença → agentes e exposições</td><td>Parte da doença, pelo grupo da CID-10, e descreve as situações de exposição ocupacional. O <strong>Grupo I</strong> reúne as doenças infecciosas e parasitárias.</td></tr>
+      <tr><td><strong>C</strong></td><td>Atividade econômica (CNAE) × doença (CID)</td><td>Base do Nexo Técnico Epidemiológico Previdenciário (NTEP), visto na Estação 4.</td></tr>
+    </tbody>
+  </table></div>
+
+  <details class="norma">
+    <summary>Lei 8.213/1991, art. 20: doença profissional e doença do trabalho <span class="fonte">Lei de Benefícios</span></summary>
+    <div class="norma-corpo">
+      <p>Art. 20. Consideram-se acidente do trabalho, nos termos do artigo anterior, as seguintes entidades mórbidas:</p>
+      <p class="inc">I - <mark>doença profissional</mark>, assim entendida a produzida ou desencadeada pelo exercício do trabalho <mark>peculiar a determinada atividade</mark> e constante da respectiva relação elaborada pelo Ministério do Trabalho e da Previdência Social;</p>
+      <p class="inc">II - <mark>doença do trabalho</mark>, assim entendida a adquirida ou desencadeada em função de <mark>condições especiais em que o trabalho é realizado</mark> e com ele se relacione diretamente, constante da relação mencionada no inciso I.</p>
+      <p>§ 1º Não são consideradas como doença do trabalho:</p>
+      <p class="inc">a) a doença degenerativa;</p>
+      <p class="inc">b) a inerente a grupo etário;</p>
+      <p class="inc">c) a que não produza incapacidade laborativa;</p>
+      <p class="inc">d) <mark>a doença endêmica adquirida por segurado habitante de região em que ela se desenvolva, salvo comprovação de que é resultante de exposição ou contato direto determinado pela natureza do trabalho</mark>.</p>
+      <p>§ 2º Em caso excepcional, constatando-se que a doença não incluída na relação prevista nos incisos I e II deste artigo resultou das condições especiais em que o trabalho é executado e com ele se relaciona diretamente, a Previdência Social deve considerá-la acidente do trabalho.</p>
+      <p class="link"><a href="https://www.planalto.gov.br/ccivil_03/leis/l8213cons.htm" target="_blank" rel="noopener">Abrir a Lei 8.213/1991 no Planalto</a></p>
+    </div>
+  </details>
+
+  <div class="conceito">
+    <p class="rot">Conceito</p>
+    <dl>
+      <dt>Doença profissional (tecnopatia)</dt>
+      <dd>É típica da profissão: o nexo é presumido porque a própria atividade expõe ao agente. Exemplo: brucelose em magarefe de abatedouro.</dd>
+      <dt>Doença do trabalho (mesopatia)</dt>
+      <dd>Pode ocorrer em qualquer pessoa, mas as condições em que o trabalho é feito a provocaram ou agravaram. Exemplo: dermatofitose em trabalhador de cozinha industrial quente e úmida.</dd>
+      <dt>Rol exemplificativo</dt>
+      <dd>O § 2º permite reconhecer como ocupacional uma doença fora da lista, quando comprovada a relação com o trabalho. A lista facilita; não esgota.</dd>
+    </dl>
+  </div>
+
+  <div class="caderno" data-bloco="A2">
+    <p class="rot">Caderno · <span class="cod">A2</span></p>
+    <ol>
+      <li>Com suas palavras, diferencie doença profissional de doença do trabalho. Dê um exemplo biológico de cada.</li>
+      <li>Copie a alínea <em>d</em> do § 1º. Ela será decisiva para dengue, malária, febre amarela e leishmaniose. Explique em uma frase por que o legislador criou essa exceção.</li>
+      <li>No Quadro das três lentes, coluna L3, registre: “Base legal: Lei 8.213, art. 20; lista: Decreto 3.048, Anexo II”.</li>
+    </ol>
+    <label class="anotei"><input type="checkbox" data-key="A2"> Anotei</label>
+  </div>
+
+  <h3>Lista B, Grupo I: doenças infecciosas e parasitárias relacionadas com o trabalho</h3>
+  <p>A tabela resume as quinze doenças do Grupo I e as situações de exposição que o decreto descreve. Leia devagar a coluna da direita: ela contém o vocabulário que você usará para descrever exposições em laudos.</p>
+
+  <details class="norma" open>
+    <summary>Decreto 3.048/1999, Anexo II, Lista B, Grupo I (síntese) <span class="fonte">Regulamento da Previdência Social</span></summary>
+    <div class="norma-corpo" style="font-family:var(--f-body);font-size:15px">
+      <div class="tab"><table>
+        <thead><tr><th>Doença</th><th>CID-10</th><th>Agente e situação de exposição descrita</th></tr></thead>
+        <tbody>
+          <tr><td>I · Tuberculose</td><td class="cid">A15–A19</td><td><em>Mycobacterium tuberculosis</em> ou <em>M. bovis</em>: laboratórios de biologia; pessoal de saúde em contato com produtos contaminados ou doentes bacilíferos. Inclui a sílico-tuberculose em expostos à sílica.</td></tr>
+          <tr><td>II · Carbúnculo</td><td class="cid">A22</td><td><em>Bacillus anthracis</em>: contato com animais infectados ou suas carcaças; trabalho artesanal ou industrial com pelos, pele, couro ou lã.</td></tr>
+          <tr><td>III · Brucelose</td><td class="cid">A23</td><td><em>Brucella</em> spp.: abatedouros, frigoríficos, manipulação de carne, ordenha, fabricação de laticínios.</td></tr>
+          <tr><td>IV · Leptospirose</td><td class="cid">A27</td><td><em>Leptospira</em>: águas sujas, locais com dejetos de animais, minas, túneis, galerias, esgotos, cursos d’água, drenagem, contato com roedores e gado, preparo de alimentos de origem animal.</td></tr>
+          <tr><td>V · Tétano</td><td class="cid">A35</td><td><em>Clostridium tetani</em>: acidentes do trabalho na agricultura, construção civil, indústria e acidentes de trajeto.</td></tr>
+          <tr><td>VI · Psitacose, ornitose</td><td class="cid">A70</td><td><em>Chlamydia psittaci</em>: criadouros de aves, veterinária, zoológicos, laboratórios biológicos.</td></tr>
+          <tr><td>VII · Dengue</td><td class="cid">A90</td><td>Mosquito <em>Aedes aegypti</em>: zonas endêmicas, trabalhos de saúde pública, laboratórios de pesquisa.</td></tr>
+          <tr><td>VIII · Febre amarela</td><td class="cid">A95</td><td>Mosquito vetor: zonas endêmicas, trabalhos de saúde pública, laboratórios de pesquisa.</td></tr>
+          <tr><td>IX · Hepatites virais</td><td class="cid">B15–B19</td><td>Vírus das hepatites A a E: manipulação de sangue humano e derivados; águas usadas e esgotos; contato com materiais de doentes ou objetos contaminados.</td></tr>
+          <tr><td>X · Doença pelo HIV</td><td class="cid">B20–B24</td><td>Trabalhadores da saúde: acidentes perfurocortantes com agulhas ou material cirúrgico contaminado; manipulação de sangue e derivados; materiais de pacientes infectados.</td></tr>
+          <tr><td>XI · Dermatofitoses e micoses superficiais</td><td class="cid">B35–B36</td><td><em>Epidermophyton</em>, <em>Microsporum</em>, <em>Trichophyton</em>: trabalho em calor e umidade (cozinhas, ginásios, piscinas).</td></tr>
+          <tr><td>XII · Candidíase</td><td class="cid">B37</td><td><em>Candida</em>: imersão prolongada das mãos em água e irritação mecânica (limpeza, lavanderia, cozinha).</td></tr>
+          <tr><td>XIII · Paracoccidioidomicose</td><td class="cid">B41</td><td><em>Paracoccidioides brasiliensis</em>: trabalho agrícola ou florestal em zonas endêmicas.</td></tr>
+          <tr><td>XIV · Malária</td><td class="cid">B50–B54</td><td><em>Plasmodium</em> spp.: mineração, construção de barragens e rodovias, extração de petróleo e outras atividades que levam o trabalhador a zonas endêmicas.</td></tr>
+          <tr><td>XV · Leishmaniose cutânea e cutâneo-mucosa</td><td class="cid">B55.1–B55.2</td><td><em>Leishmania braziliensis</em>: trabalho agrícola ou florestal em zonas endêmicas.</td></tr>
+        </tbody>
+      </table></div>
+      <p class="obs">Síntese didática. Para citação em documento técnico, transcreva a redação literal do decreto.</p>
+      <p class="link"><a href="https://www.planalto.gov.br/ccivil_03/decreto/d3048.htm" target="_blank" rel="noopener">Abrir o Decreto 3.048/1999 no Planalto</a> · o Anexo II fica no final da página</p>
+    </div>
+  </details>
+
+  <div class="caderno" data-bloco="A3">
+    <p class="rot">Caderno · <span class="cod">A3</span> · interpretação da tabela</p>
+    <ol>
+      <li>Quatro doenças da lista mencionam “zonas endêmicas”. Quais são? Relacione-as à alínea <em>d</em> do art. 20 que você copiou em A2.</li>
+      <li>Em quais doenças a via de transmissão é um <strong>acidente</strong> (perfurocortante, ferimento) e não uma exposição contínua? O que isso muda na emissão da CAT?</li>
+      <li>Liste as atividades que aparecem em mais de uma linha (por exemplo, esgotos, laboratórios, abatedouros). Esses ambientes vão reaparecer nas Estações 2 e 3.</li>
+    </ol>
+    <label class="anotei"><input type="checkbox" data-key="A3"> Anotei</label>
+  </div>
+
+  <div class="atividade">
+    <p class="rot">Atividade 1.1 · associação</p>
+    <h4>Qual doença da Lista B melhor corresponde a cada exposição?</h4>
+    <div class="assoc" id="assoc1"></div>
+    <button class="btn" id="checaAssoc1">Verificar associações</button>
+    <p id="assoc1Res" class="fb" hidden></p>
+  </div>
+
+  <div class="atividade">
+    <p class="rot">Atividade 1.2 · interpretação</p>
+    <div class="q" data-q="1.2">
+      <p class="enun">Um trabalhador de escritório de uma mineradora, morador de uma cidade em área endêmica, contrai malária. Ele nunca vai às frentes de lavra. Pelo art. 20 da Lei 8.213, como a situação se enquadra?</p>
+      <div class="opc">
+        <label data-v="errado"><input type="radio" name="q12"> É doença profissional, porque malária consta da Lista B e a empresa é mineradora.</label>
+        <div class="fb errado" hidden><b>Revise.</b> Constar da lista não basta. A Lista B descreve a exposição em mineração que leva o trabalhador a zonas endêmicas; o que importa é a exposição real do trabalhador, e não o ramo da empresa.</div>
+        <label data-v="certo"><input type="radio" name="q12"> Em princípio, não é doença do trabalho: é doença endêmica adquirida por habitante da região, e a natureza do trabalho não o expõe diretamente.</label>
+        <div class="fb certo" hidden><b>Correto.</b> Aplica-se a exceção do § 1º, alínea d. O quadro mudaria se ele fosse deslocado para frentes de trabalho em mata ou para alojamentos em área de transmissão, porque aí a exposição seria determinada pela natureza do trabalho.</div>
+        <label data-v="parcial"><input type="radio" name="q12"> É doença do trabalho, porque o § 2º permite reconhecer qualquer doença relacionada ao trabalho.</label>
+        <div class="fb parcial" hidden><b>Quase.</b> O § 2º amplia a lista, mas continua exigindo que a doença resulte das condições especiais do trabalho. Aqui essa relação não foi demonstrada, e a alínea d afasta a presunção.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav"><button class="btn sec" data-ir="0">← Estação 0</button><button class="btn" data-ir="2">Ir para a Estação 2 →</button></div>
+</section>
+
+<!-- ===================== ESTAÇÃO 2 ===================== -->
+<section class="estacao" data-titulo="Anexo 14" id="e2" hidden>
+  <div class="est-cab">
+    <p class="eyebrow">Estação 2 · Lente 1 · cerca de 45 min</p>
+    <h2>Insalubridade: a leitura técnica do Anexo 14 da NR-15</h2>
+    <p class="meta">Uma avaliação sem limite de tolerância, baseada em listas de ambientes. Você vai ler o anexo palavra por palavra e depois criticá-lo.</p>
+  </div>
+
+  <div class="texto">
+    <p>A insalubridade é um instituto do <strong>direito do trabalho</strong>. Ela gera um adicional pago pelo empregador enquanto durar a exposição, e sua caracterização depende de perícia. Comece pela CLT, que cria o instituto, e depois pela NR-15, que define como caracterizá-lo.</p>
+  </div>
+
+  <details class="norma">
+    <summary>CLT, arts. 189, 190, 192 e 195 <span class="fonte">Decreto-Lei 5.452/1943</span></summary>
+    <div class="norma-corpo">
+      <p>Art. 189. Serão consideradas atividades ou operações insalubres aquelas que, por sua natureza, condições ou métodos de trabalho, exponham os empregados a agentes nocivos à saúde, acima dos limites de tolerância fixados em razão da natureza e da intensidade do agente e do tempo de exposição aos seus efeitos.</p>
+      <p>Art. 190. O Ministério do Trabalho aprovará o <mark>quadro das atividades e operações insalubres</mark> e adotará normas sobre os critérios de caracterização da insalubridade, os limites de tolerância aos agentes agressivos, meios de proteção e o tempo máximo de exposição do empregado a esses agentes.</p>
+      <p>Art. 192. O exercício de trabalho em condições insalubres, acima dos limites de tolerância estabelecidos pelo Ministério do Trabalho, assegura a percepção de adicional respectivamente de <mark>40%, 20% e 10%</mark> do salário-mínimo da região, segundo se classifiquem nos graus máximo, médio e mínimo.</p>
+      <p>Art. 195. A caracterização e a classificação da insalubridade e da periculosidade, segundo as normas do Ministério do Trabalho, far-se-ão através de <mark>perícia a cargo de Médico do Trabalho ou Engenheiro do Trabalho</mark>, registrados no Ministério do Trabalho.</p>
+      <p class="obs">A base de cálculo do adicional (salário-mínimo) é objeto de controvérsia desde a Súmula Vinculante 4 do STF. Esse debate não é tema desta trilha.</p>
+      <p class="link"><a href="https://www.planalto.gov.br/ccivil_03/decreto-lei/del5452.htm" target="_blank" rel="noopener">Abrir a CLT no Planalto</a></p>
+    </div>
+  </details>
+
+  <details class="norma">
+    <summary>NR-15, itens 15.1, 15.3 e 15.4 <span class="fonte">Portaria 3.214/1978</span></summary>
+    <div class="norma-corpo">
+      <p>15.1 São consideradas atividades ou operações insalubres as que se desenvolvem:</p>
+      <p class="inc">15.1.1 Acima dos limites de tolerância previstos nos Anexos n.º 1, 2, 3, 5, 11 e 12;</p>
+      <p class="inc">15.1.3 <mark>Nas atividades mencionadas nos Anexos n.º 6, 13 e 14</mark>;</p>
+      <p class="inc">15.1.4 Comprovadas através de laudo de inspeção do local de trabalho, constantes dos Anexos n.º 7, 8, 9 e 10.</p>
+      <p>15.3 No caso de incidência de mais de um fator de insalubridade, será apenas considerado o de grau mais elevado, para efeito de acréscimo salarial, sendo vedada a percepção cumulativa.</p>
+      <p>15.4 A eliminação ou neutralização da insalubridade determinará a cessação do pagamento do adicional respectivo.</p>
+      <p class="obs">Repare: o Anexo 14 está no item 15.1.3, junto com anexos cuja caracterização decorre da atividade listada, e não de medição comparada a limite.</p>
+    </div>
+  </details>
+
+  <div class="conceito">
+    <p class="rot">Conceito</p>
+    <dl>
+      <dt>Avaliação qualitativa</dt>
+      <dd>Não há limite de tolerância para agentes biológicos. O perito verifica se a atividade real do trabalhador corresponde a uma das situações descritas no Anexo 14. Não se mede concentração nem tempo.</dd>
+      <dt>Lista de ambientes, não de agentes</dt>
+      <dd>O anexo não cita microrganismos por espécie ou classe de risco. Ele descreve lugares e tarefas: isolamento, esgoto, lixo, hospitais, laboratórios, cemitérios.</dd>
+      <dt>Contato permanente</dt>
+      <dd>Todas as hipóteses exigem contato permanente. A interpretação desse termo é o ponto mais disputado do anexo.</dd>
+    </dl>
+  </div>
+
+  <details class="norma" open>
+    <summary>NR-15, Anexo 14: agentes biológicos (texto integral) <span class="fonte">Portaria SSST 12/1979</span></summary>
+    <div class="norma-corpo">
+      <p>Relação das atividades que envolvem agentes biológicos, cuja insalubridade é caracterizada pela <mark>avaliação qualitativa</mark>.</p>
+      <p><strong>Insalubridade de grau máximo</strong></p>
+      <p>Trabalho ou operações, em <mark>contato permanente</mark> com:</p>
+      <p class="inc">- pacientes em <mark>isolamento</mark> por doenças infecto-contagiosas, bem como objetos de seu uso, não previamente esterilizados;</p>
+      <p class="inc">- carnes, glândulas, vísceras, sangue, ossos, couros, pêlos e dejeções de <mark>animais portadores de doenças infectocontagiosas</mark> (carbunculose, brucelose, tuberculose);</p>
+      <p class="inc">- esgotos (galerias e tanques); e</p>
+      <p class="inc">- lixo urbano (coleta e industrialização).</p>
+      <p><strong>Insalubridade de grau médio</strong></p>
+      <p>Trabalhos e operações em contato permanente com pacientes, animais ou com material infecto-contagiante, em:</p>
+      <p class="inc">- hospitais, serviços de emergência, enfermarias, ambulatórios, postos de vacinação e outros estabelecimentos destinados aos cuidados da saúde humana (<mark>aplica-se unicamente ao pessoal que tenha contato com os pacientes</mark>, bem como aos que manuseiam objetos de uso desses pacientes, não previamente esterilizados);</p>
+      <p class="inc">- hospitais, ambulatórios, postos de vacinação e outros estabelecimentos destinados ao atendimento e tratamento de animais (aplica-se apenas ao pessoal que tenha contato com tais animais);</p>
+      <p class="inc">- contato em laboratórios, com animais destinados ao preparo de soro, vacinas e outros produtos;</p>
+      <p class="inc">- laboratórios de análise clínica e histopatologia (<mark>aplica-se tão-só ao pessoal técnico</mark>);</p>
+      <p class="inc">- gabinetes de autópsias, de anatomia e histoanatomopatologia (aplica-se somente ao pessoal técnico);</p>
+      <p class="inc">- cemitérios (exumação de corpos);</p>
+      <p class="inc">- estábulos e cavalariças; e</p>
+      <p class="inc">- resíduos de animais deteriorados.</p>
+    </div>
+  </details>
+
+  <div class="caderno" data-bloco="A4">
+    <p class="rot">Caderno · <span class="cod">A4</span> · leitura com lupa</p>
+    <ol>
+      <li>Desenhe duas colunas, <em>Grau máximo</em> e <em>Grau médio</em>, e copie as hipóteses de cada uma em forma de tópicos curtos.</li>
+      <li>Qual é o <strong>critério</strong> que separa os graus? Compare “pacientes em isolamento” com “contato com pacientes” e “animais portadores de doenças” com “estábulos e cavalariças”. Escreva a regra em uma frase.</li>
+      <li>Sublinhe as <strong>restrições de alcance</strong> (“aplica-se unicamente…”, “tão-só ao pessoal técnico”). Para cada uma, dê um exemplo de trabalhador que fica de fora.</li>
+      <li>No Quadro das três lentes, coluna L1, registre: base legal, graus e percentuais, quem caracteriza (art. 195) e que a avaliação é qualitativa.</li>
+    </ol>
+    <label class="anotei"><input type="checkbox" data-key="A4"> Anotei</label>
+  </div>
+
+  <div class="atividade">
+    <p class="rot">Atividade 2.1 · enquadramento literal</p>
+    <p>Aplique somente o texto do Anexo 14. A jurisprudência vem depois.</p>
+    <div id="enq21"></div>
+  </div>
+
+  <h3>O que os tribunais fizeram com o anexo</h3>
+  <p>O texto é de 1979 e não foi atualizado. A Justiça do Trabalho preencheu lacunas com súmulas. Leia as três mais importantes para agentes biológicos.</p>
+
+  <details class="norma">
+    <summary>TST, Súmula 448: limpeza de instalações sanitárias <span class="fonte">Tribunal Superior do Trabalho</span></summary>
+    <div class="norma-corpo">
+      <p>I - Não basta a constatação da insalubridade por meio de laudo pericial para que o empregado tenha direito ao respectivo adicional, sendo necessária a <mark>classificação da atividade insalubre na relação oficial</mark> elaborada pelo Ministério do Trabalho.</p>
+      <p>II - A higienização de instalações sanitárias de <mark>uso público ou coletivo de grande circulação</mark>, e a respectiva coleta de lixo, por não se equiparar à limpeza em residências e escritórios, enseja o pagamento de adicional de insalubridade em grau máximo, incidindo o disposto no Anexo 14 da NR-15 da Portaria do MTE nº 3.214/78 quanto à coleta e industrialização de lixo urbano.</p>
+      <p class="obs">Decisões do TST têm tratado como “de grande circulação” sanitários usados por 25 ou mais pessoas. A extensão do item II a hotéis é questionada no STF na ADPF 1083; acompanhe o andamento.</p>
+      <p class="link"><a href="https://www.tst.jus.br/sumulas" target="_blank" rel="noopener">Abrir as súmulas do TST</a></p>
+    </div>
+  </details>
+
+  <details class="norma">
+    <summary>TST, Súmula 47: trabalho intermitente <span class="fonte">Tribunal Superior do Trabalho</span></summary>
+    <div class="norma-corpo">
+      <p>O trabalho executado em condições insalubres, em <mark>caráter intermitente</mark>, não afasta, só por essa circunstância, o direito à percepção do respectivo adicional.</p>
+    </div>
+  </details>
+
+  <details class="norma">
+    <summary>TST, Súmula 289: fornecimento de EPI <span class="fonte">Tribunal Superior do Trabalho</span></summary>
+    <div class="norma-corpo">
+      <p>O simples fornecimento do aparelho de proteção pelo empregador não o exime do pagamento do adicional de insalubridade. Cabe-lhe tomar as medidas que conduzam à diminuição ou eliminação da nocividade, entre as quais as relativas ao uso efetivo do equipamento pelo empregado.</p>
+    </div>
+  </details>
+
+  <div class="caderno" data-bloco="A5">
+    <p class="rot">Caderno · <span class="cod">A5</span> · tensões entre texto e jurisprudência</p>
+    <ol>
+      <li>O item I da Súmula 448 exige que a atividade esteja na relação oficial. O item II estende o grau máximo a uma atividade que o Anexo 14 não cita literalmente. Explique como o TST conciliou as duas coisas (dica: releia a última frase do item II).</li>
+      <li>A Súmula 47 fala em trabalho intermitente; o Anexo 14 exige contato permanente. Escreva como um laudo deveria descrever a frequência e a natureza do contato para que o leitor possa decidir.</li>
+      <li>Para agentes biológicos, é possível afirmar que um EPI neutraliza a exposição, nos termos do item 15.4? Justifique com a via de transmissão de dois agentes da Lista B.</li>
+    </ol>
+    <label class="anotei"><input type="checkbox" data-key="A5"> Anotei</label>
+  </div>
+
+  <div class="alerta">
+    <p class="rot">Postura técnica</p>
+    <p>Súmula é entendimento dos tribunais, não norma técnica. Em um laudo, o perito descreve a atividade real, enquadra no texto do Anexo 14 e, quando houver, <strong>menciona</strong> a jurisprudência aplicável, deixando claro o que é enquadramento normativo e o que é interpretação judicial.</p>
+  </div>
+
+  <div class="atividade">
+    <p class="rot">Atividade 2.2 · crítica técnica</p>
+    <div class="q">
+      <p class="enun">Um laboratório universitário de pesquisa em micobactérias manipula culturas de <em>M. tuberculosis</em> (classe de risco 3) em cabine de segurança biológica. Pelo texto literal do Anexo 14, os técnicos desse laboratório:</p>
+      <div class="opc">
+        <label data-v="errado"><input type="radio" name="q22"> Recebem grau máximo, porque o agente é de alto risco.</label>
+        <div class="fb errado" hidden><b>Revise.</b> O Anexo 14 não gradua por classe de risco do agente. O grau máximo depende de situações listadas (isolamento, esgoto, lixo, animais doentes), e nenhuma delas descreve o laboratório de pesquisa.</div>
+        <label data-v="parcial"><input type="radio" name="q22"> Recebem grau médio, porque trabalham em laboratório.</label>
+        <div class="fb parcial" hidden><b>Discutível.</b> O anexo cita “laboratórios de análise clínica e histopatologia”. Pesquisa não é análise clínica. Muitos peritos enquadram por analogia, mas isso é interpretação, e não leitura literal. Registre essa escolha explicitamente no laudo.</div>
+        <label data-v="certo"><input type="radio" name="q22"> Não se enquadram literalmente em nenhuma hipótese, o que revela uma lacuna do anexo diante de um risco que é real.</label>
+        <div class="fb certo" hidden><b>Essa é a leitura literal.</b> Ela mostra o descompasso entre um anexo de 1979, organizado por ambientes, e a classificação de risco por agente da NR-32. O enquadramento por analogia é possível, mas precisa ser fundamentado. Guarde este caso: ele volta na Estação 5.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav"><button class="btn sec" data-ir="1">← Estação 1</button><button class="btn" data-ir="3">Ir para a Estação 3 →</button></div>
+</section>
+
+<!-- ===================== ESTAÇÃO 3 ===================== -->
+<section class="estacao" data-titulo="Anexo IV" id="e3" hidden>
+  <div class="est-cab">
+    <p class="eyebrow">Estação 3 · Lente 2 · cerca de 40 min</p>
+    <h2>Aposentadoria especial: o item 3.0.1 do Anexo IV</h2>
+    <p class="meta">Listas quase espelhadas às do Anexo 14, mas com outra lógica, outra finalidade e outros documentos.</p>
+  </div>
+
+  <div class="texto">
+    <p>A aposentadoria especial é um benefício previdenciário pago pelo INSS a quem trabalhou exposto a agentes nocivos pelo tempo exigido. Para agentes biológicos, o tempo é de 25 anos. O que conta aqui não é o adicional, e sim o <strong>tempo especial</strong>, comprovado pelo PPP com base no LTCAT.</p>
+  </div>
+
+  <details class="norma">
+    <summary>Lei 8.213/1991, art. 57, § 3º, e art. 58 <span class="fonte">Lei de Benefícios</span></summary>
+    <div class="norma-corpo">
+      <p>Art. 57, § 3º A concessão da aposentadoria especial dependerá de comprovação pelo segurado, perante o Instituto Nacional do Seguro Social–INSS, do tempo de trabalho <mark>permanente, não ocasional nem intermitente</mark>, em condições especiais que prejudiquem a saúde ou a integridade física, durante o período mínimo fixado.</p>
+      <p>Art. 58 (síntese): a relação dos agentes nocivos é definida pelo Poder Executivo, e a comprovação da exposição se faz por formulário emitido pela empresa (hoje, o PPP), com base em <mark>laudo técnico de condições ambientais do trabalho (LTCAT)</mark> expedido por médico do trabalho ou engenheiro de segurança do trabalho. O laudo deve informar a existência de tecnologia de proteção coletiva ou individual que diminua a intensidade do agente.</p>
+      <p class="link"><a href="https://www.planalto.gov.br/ccivil_03/leis/l8213cons.htm" target="_blank" rel="noopener">Abrir a Lei 8.213/1991 no Planalto</a></p>
+    </div>
+  </details>
+
+  <details class="norma" open>
+    <summary>Decreto 3.048/1999, Anexo IV, códigos 3.0.0 e 3.0.1 <span class="fonte">redação do Decreto 4.882/2003</span></summary>
+    <div class="norma-corpo">
+      <p><strong>3.0.0 BIOLÓGICOS</strong> — Exposição aos agentes citados <mark>unicamente nas atividades relacionadas</mark>.</p>
+      <p><strong>3.0.1 MICROORGANISMOS E PARASITAS INFECTO-CONTAGIOSOS VIVOS E SUAS TOXINAS</strong> · tempo de exposição: <mark>25 anos</mark></p>
+      <p class="inc">a) trabalhos em estabelecimentos de saúde em contato com pacientes portadores de doenças infecto-contagiosas ou com manuseio de materiais contaminados;</p>
+      <p class="inc">b) trabalhos com animais infectados para tratamento ou para o preparo de soro, vacinas e outros produtos;</p>
+      <p class="inc">c) trabalhos em laboratórios de autópsia, de anatomia e anátomo-histologia;</p>
+      <p class="inc">d) trabalho de exumação de corpos e manipulação de resíduos de animais deteriorados;</p>
+      <p class="inc">e) trabalhos em galerias, fossas e tanques de esgoto;</p>
+      <p class="inc">f) esvaziamento de biodigestores;</p>
+      <p class="inc">g) coleta e industrialização do lixo.</p>
+      <p class="link"><a href="https://www.planalto.gov.br/ccivil_03/decreto/d3048.htm" target="_blank" rel="noopener">Abrir o Decreto 3.048/1999 no Planalto</a> · o Anexo IV fica no final da página</p>
+    </div>
+  </details>
+
+  <div class="atividade">
+    <p class="rot">Atividade 3.1 · comparação de listas</p>
+    <h4>Quais hipóteses do Anexo 14 têm correspondente no item 3.0.1?</h4>
+    <p>Marque as que você encontra, com redação igual ou equivalente, nas alíneas a) a g). Use os dois trechos abertos acima.</p>
+    <div class="opc" id="comp31"></div>
+    <button class="btn" id="checaComp31">Conferir</button>
+    <div id="comp31Res" class="resp" hidden></div>
+  </div>
+
+  <div class="conceito">
+    <p class="rot">Conceito · origem comum</p>
+    <p>As duas listas descendem dos mesmos quadros antigos (Decretos 53.831/1964 e 83.080/1979). Por isso se parecem. Mas respondem a perguntas diferentes: o Anexo 14 pergunta <em>se o empregador deve pagar um adicional agora</em>; o item 3.0.1 pergunta <em>se aquele tempo deve encurtar a vida laboral</em>.</p>
+  </div>
+
+  <h3>Permanência e EPI: onde as lentes se separam de verdade</h3>
+
+  <details class="norma">
+    <summary>TNU, Temas 205 e 211: agentes biológicos <span class="fonte">Turma Nacional de Uniformização</span></summary>
+    <div class="norma-corpo">
+      <p><strong>Tema 211:</strong> Para aplicação do artigo 57, § 3º, da Lei n.º 8.213/91 a agentes biológicos, exige-se a <mark>probabilidade da exposição ocupacional</mark>, avaliando-se, de acordo com a profissiografia, o seu <mark>caráter indissociável</mark> da produção do bem ou da prestação do serviço, independente de tempo mínimo de exposição durante a jornada.</p>
+      <p><strong>Tema 205 (síntese):</strong> o rol de atividades dos decretos é <mark>exemplificativo</mark>; mas é necessário comprovar, em concreto, risco de exposição superior ao risco geral, avaliado pela profissiografia e com o caráter indissociável do Tema 211.</p>
+      <p class="link"><a href="https://www.cjf.jus.br/cjf/noticias/2020/03-marco/tnu-define-requisitos-para-reconhecimento-da-natureza-especial-de-tempo-laborado-em-exposicao-a-agentes-biologicos" target="_blank" rel="noopener">Notícia do CJF sobre o Tema 205</a></p>
+    </div>
+  </details>
+
+  <details class="norma">
+    <summary>STF, Tema 555, e STJ, Tema 1090: EPI eficaz <span class="fonte">jurisprudência vinculante</span></summary>
+    <div class="norma-corpo">
+      <p><strong>STF, Tema 555 (2014), primeira tese:</strong> o direito à aposentadoria especial pressupõe a efetiva exposição do trabalhador a agente nocivo à sua saúde, de modo que, se o EPI for realmente capaz de neutralizar a nocividade, não haverá respaldo constitucional à aposentadoria especial. A segunda tese excetua o ruído.</p>
+      <p><strong>STJ, Tema 1090 (abril de 2025), síntese:</strong> a anotação de EPI eficaz no PPP descaracteriza, <em>em princípio</em>, o tempo especial; o segurado pode impugná-la; e, havendo <mark>dúvida razoável sobre a real eficácia</mark> do EPI, decide-se a favor do segurado.</p>
+      <p class="obs">Para agentes biológicos, há decisões que afirmam não existir EPI capaz de neutralizar totalmente o risco de contágio, e o tema estava em discussão na TNU em 2026. Verifique o entendimento vigente antes de usar em documento.</p>
+      <p class="link"><a href="https://www.stj.jus.br/sites/portalp/Paginas/Comunicacao/Noticias/2025/29042025-Anotacao-positiva-sobre-uso-de-EPI-afasta-risco-laboral-para-fins-de-aposentadoria-especial.aspx" target="_blank" rel="noopener">Notícia do STJ sobre o Tema 1090</a></p>
+    </div>
+  </details>
+
+  <h3>Quadro comparativo: interprete os dados</h3>
+  <div class="tab"><table>
+    <thead><tr><th>Critério</th><th>L1 · Anexo 14 (NR-15)</th><th>L2 · Anexo IV, 3.0.1</th></tr></thead>
+    <tbody>
+      <tr><td>Natureza</td><td>Trabalhista: adicional salarial</td><td>Previdenciária: contagem de tempo</td></tr>
+      <tr><td>Quem paga</td><td>Empregador, mensalmente</td><td>INSS, no benefício; a empresa recolhe adicional de contribuição</td></tr>
+      <tr><td>Graduação</td><td>Máximo (40%) ou médio (20%)</td><td>Não há graus: 25 anos para todas as alíneas</td></tr>
+      <tr><td>Exposição exigida</td><td>Contato permanente (Súm. 47: intermitência não afasta por si só)</td><td>Permanente, não ocasional nem intermitente; para biológicos, probabilidade indissociável da atividade (Tema 211)</td></tr>
+      <tr><td>Rol</td><td>Relação oficial exigida (Súm. 448, I), com extensões jurisprudenciais</td><td>Exemplificativo (Tema 205), com prova de risco superior ao geral</td></tr>
+      <tr><td>Efeito do EPI</td><td>Fornecimento não basta (Súm. 289); neutralização encerra o adicional (15.4)</td><td>EPI eficaz afasta em princípio (Tema 1090); dúvida favorece o segurado</td></tr>
+      <tr><td>Documento</td><td>Laudo pericial de insalubridade</td><td>LTCAT e PPP</td></tr>
+      <tr><td>Quem assina</td><td>Médico do trabalho ou engenheiro de segurança (CLT, art. 195)</td><td>Médico do trabalho ou engenheiro de segurança (Lei 8.213, art. 58)</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="caderno" data-bloco="A6">
+    <p class="rot">Caderno · <span class="cod">A6</span> · leitura do quadro</p>
+    <ol>
+      <li>Identifique no quadro <strong>duas linhas</strong> em que uma mesma situação real pode receber resposta positiva numa lente e negativa na outra. Descreva um trabalhador hipotético para cada uma.</li>
+      <li>O quadro mostra que o PPP é preenchido pela empresa com base no LTCAT. Que informações sobre a exposição biológica o LTCAT precisa conter para que o PPP não seja contestado? Liste ao menos cinco (pense em tarefa, frequência, via de exposição, agentes prováveis, medidas de controle).</li>
+      <li>Complete a coluna L2 do Quadro das três lentes.</li>
+    </ol>
+    <label class="anotei"><input type="checkbox" data-key="A6"> Anotei</label>
+  </div>
+
+  <div class="atividade">
+    <p class="rot">Atividade 3.2 · redação técnica</p>
+    <p>Compare dois trechos de LTCAT sobre o mesmo posto (auxiliar de limpeza hospitalar). Qual sustenta melhor o enquadramento no 3.0.1?</p>
+    <div class="q">
+      <div class="opc">
+        <label data-v="errado"><input type="radio" name="q32"> <span><strong>Trecho A.</strong> “Exposição a agentes biológicos. Risco eventual. Utiliza EPI eficaz (luvas).”</span></label>
+        <div class="fb errado" hidden><b>Fraco.</b> Não descreve tarefa, local, frequência nem via de exposição. “Risco eventual” contradiz a atividade sem justificativa, e declara eficácia de luvas contra um risco que inclui perfurocortantes em sacos de resíduos. É o tipo de trecho que gera contestação judicial e “dúvida razoável”.</div>
+        <label data-v="certo"><input type="radio" name="q32"> <span><strong>Trecho B.</strong> “Realiza, em todos os turnos, a limpeza concorrente e terminal de enfermarias e do pronto-socorro, com recolhimento de resíduos do grupo A (infectantes) e E (perfurocortantes). Contato com sangue e secreções em superfícies e roupas é inerente à tarefa. Agentes prováveis: HBV, HCV, HIV, bactérias multirresistentes. Enquadramento: Anexo IV, 3.0.1, a. Luvas nitrílicas reduzem o contato cutâneo, mas não neutralizam o risco de lesão perfurocortante.”</span></label>
+        <div class="fb certo" hidden><b>Adequado.</b> Descreve tarefa, locais, frequência, materiais, via de exposição e agentes, justifica o caráter indissociável (Tema 211) e trata o EPI com honestidade técnica. Use esta estrutura como modelo no parecer final.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav"><button class="btn sec" data-ir="2">← Estação 2</button><button class="btn" data-ir="4">Ir para a Estação 4 →</button></div>
+</section>
+
+<!-- ===================== ESTAÇÃO 4 ===================== -->
+<section class="estacao" data-titulo="Nexo" id="e4" hidden>
+  <div class="est-cab">
+    <p class="eyebrow">Estação 4 · Lente 3 · cerca de 40 min</p>
+    <h2>Nexo causal, CAT, NTEP e o custo para a empresa</h2>
+    <p class="meta">Como uma infecção vira acidente do trabalho no sistema previdenciário, e por que isso interessa ao higienista.</p>
+  </div>
+
+  <div class="texto">
+    <p>Reconhecida como ocupacional, a doença é equiparada a acidente do trabalho. As consequências incluem benefício de natureza acidentária, estabilidade provisória no emprego após o retorno e depósito do FGTS durante o afastamento. O caminho até esse reconhecimento segue uma sequência de verificações.</p>
+  </div>
+
+  <h3>O percurso do nexo</h3>
+  <div class="fluxo">
+    <div class="passo"><div><div class="bola">1</div><div class="trilho"></div></div><div class="conteudo"><h4>Há diagnóstico e incapacidade?</h4><p>Sem incapacidade laborativa não há doença do trabalho para fins previdenciários (art. 20, § 1º, c). A infecção assintomática gera vigilância, não benefício.</p></div></div>
+    <div class="passo"><div><div class="bola">2</div><div class="trilho"></div></div><div class="conteudo"><h4>A doença e a exposição constam do Anexo II?</h4><p>Consulte a Lista B. Se constarem, o nexo é facilitado; se não, ainda é possível pelo art. 20, § 2º.</p></div></div>
+    <div class="passo"><div><div class="bola">3</div><div class="trilho"></div></div><div class="conteudo"><h4>É doença endêmica?</h4><p>Se sim, só será do trabalho se a natureza do trabalho determinou a exposição (art. 20, § 1º, d).</p></div></div>
+    <div class="passo"><div><div class="bola">4</div><div class="trilho"></div></div><div class="conteudo"><h4>Houve um evento agudo?</h4><p>Acidente perfurocortante ou ferimento é acidente típico: a CAT deve ser emitida na data do evento, e a doença que surgir depois é consequência dele.</p></div></div>
+    <div class="passo"><div><div class="bola">5</div><div class="trilho"></div></div><div class="conteudo"><h4>O NTEP se aplica?</h4><p>Se o par CNAE da empresa × CID da doença estiver na Lista C, a perícia presume o nexo; cabe à empresa contestar.</p></div></div>
+  </div>
+
+  <details class="norma">
+    <summary>Lei 8.213/1991, art. 21-A, e Decreto 3.048/1999, art. 337, § 3º <span class="fonte">NTEP</span></summary>
+    <div class="norma-corpo">
+      <p>Lei 8.213, art. 21-A. A perícia médica do Instituto Nacional do Seguro Social (INSS) considerará caracterizada a natureza acidentária da incapacidade quando constatar ocorrência de <mark>nexo técnico epidemiológico</mark> entre o trabalho e o agravo, decorrente da relação entre a atividade da empresa ou do empregado doméstico e a entidade mórbida motivadora da incapacidade elencada na Classificação Internacional de Doenças (CID), em conformidade com o que dispuser o regulamento.</p>
+      <p class="obs">Os parágrafos do art. 21-A permitem afastar o nexo quando demonstrada a sua inexistência e asseguram à empresa requerer a não aplicação, com recurso.</p>
+      <p>Decreto 3.048, art. 337, § 3º. Considera-se estabelecido o nexo entre o trabalho e o agravo quando se verificar nexo técnico epidemiológico entre a atividade da empresa e a entidade mórbida motivadora da incapacidade, elencada na Classificação Internacional de Doenças - CID em conformidade com o disposto na <mark>Lista C do Anexo II</mark> deste Regulamento.</p>
+    </div>
+  </details>
+
+  <div class="conceito">
+    <p class="rot">Conceito</p>
+    <dl>
+      <dt>NTEP</dt>
+      <dd>Presunção estatística: se uma atividade econômica apresenta excesso de afastamentos por determinado CID em relação ao conjunto das atividades, o nexo passa a ser presumido para aquele par. Inverte o ônus da prova: a empresa é quem precisa demonstrar que não há relação.</dd>
+      <dt>FAP (Fator Acidentário de Prevenção)</dt>
+      <dd>Multiplicador entre 0,5 e 2,0 aplicado à alíquota do seguro de acidentes (RAT de 1%, 2% ou 3% sobre a folha). Considera frequência, gravidade e custo dos benefícios acidentários da empresa em relação ao seu setor. Mais afastamentos acidentários, FAP maior.</dd>
+    </dl>
+  </div>
+
+  <div class="atividade">
+    <p class="rot">Atividade 4.1 · interpretação de dados · valores fictícios</p>
+    <h4>Quanto custa não controlar o risco biológico?</h4>
+    <p>Um hospital hipotético tem RAT de 2%. Ajuste a folha e o FAP e observe o efeito. Em seguida, responda no caderno.</p>
+    <div class="calc">
+      <label for="fFolha">Folha mensal (R$)<input id="fFolha" type="number" min="0" step="10000" value="1500000"></label>
+      <label for="fRat">RAT<select id="fRat"><option value="1">1%</option><option value="2" selected>2%</option><option value="3">3%</option></select></label>
+      <label for="fFap">FAP (0,5 a 2,0)<input id="fFap" type="number" min="0.5" max="2" step="0.05" value="1.40"></label>
+    </div>
+    <div class="saida" aria-live="polite">
+      <div><span>Alíquota ajustada</span><strong id="oAliq">–</strong></div>
+      <div><span>Contribuição anual</span><strong id="oAnual">–</strong></div>
+      <div><span>Diferença para FAP 1,0 no ano</span><strong id="oDif">–</strong></div>
+    </div>
+    <p class="obs" style="color:var(--muted);font-size:14px">Cálculo simplificado: folha × RAT × FAP × 13 (inclui o 13º salário). Não inclui o adicional para aposentadoria especial.</p>
+  </div>
+
+  <div class="caderno" data-bloco="A7">
+    <p class="rot">Caderno · <span class="cod">A7</span> · interpretação</p>
+    <ol>
+      <li>Registre a diferença anual entre FAP 1,4 e FAP 0,8 para a folha do exemplo. Esse valor pagaria quantos dispositivos de segurança para agulhas, se cada um custasse R$ 1,50 e o hospital usasse 30 mil por mês? Mostre a conta.</li>
+      <li>Por que um afastamento por hepatite B de uma técnica de enfermagem pesa no FAP, mas um afastamento por gripe comum dela, em princípio, não?</li>
+      <li>Complete a coluna L3 do Quadro das três lentes: base legal, papel da CAT, NTEP e FAP.</li>
+    </ol>
+    <label class="anotei"><input type="checkbox" data-key="A7"> Anotei</label>
+  </div>
+
+  <div class="atividade">
+    <p class="rot">Atividade 4.2 · o caso-âncora</p>
+    <div class="q">
+      <p class="enun">No caso de Márcia, a CAT não foi emitida na data da perfuração. Qual foi a consequência técnica mais relevante dessa omissão?</p>
+      <div class="opc">
+        <label data-v="errado"><input type="radio" name="q42"> Nenhuma: como a hepatite B consta da Lista B, o nexo será reconhecido de qualquer forma.</label>
+        <div class="fb errado" hidden><b>Revise.</b> A lista facilita, mas a perícia precisa ligar a doença ao trabalho. Sem registro do evento, a fonte, a data e a sorologia inicial, esse vínculo fica frágil, especialmente para uma doença que também se transmite fora do trabalho.</div>
+        <label data-v="certo"><input type="radio" name="q42"> Perdeu-se o registro do acidente típico e do protocolo pós-exposição (sorologia basal, avaliação da fonte, profilaxia), que provaria que a infecção decorreu do trabalho.</label>
+        <div class="fb certo" hidden><b>Correto.</b> A CAT do acidente e a sorologia basal da trabalhadora demonstram que ela não estava infectada antes e que houve exposição documentada. É a prova mais forte do nexo. Na ausência dela, restam o NTEP e a Lista B, que são presunções.</div>
+        <label data-v="parcial"><input type="radio" name="q42"> O hospital fica impedido de contestar o nexo.</label>
+        <div class="fb parcial" hidden><b>Não exatamente.</b> A omissão pode gerar multa administrativa, mas não impede contestação. O prejuízo maior é probatório, para os dois lados: nem a trabalhadora nem o hospital têm o registro do evento.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav"><button class="btn sec" data-ir="3">← Estação 3</button><button class="btn" data-ir="5">Ir para a Estação 5 →</button></div>
+</section>
+
+<!-- ===================== ESTAÇÃO 5 ===================== -->
+<section class="estacao" data-titulo="Casos" id="e5" hidden>
+  <div class="est-cab">
+    <p class="eyebrow">Estação 5 · Integração · cerca de 60 min</p>
+    <h2>Oito postos, três lentes</h2>
+    <p class="meta">Para cada caso, responda às três perguntas antes de ler os comentários. Vários casos são ambíguos de propósito.</p>
+  </div>
+
+  <div class="caderno" data-bloco="A8">
+    <p class="rot">Caderno · <span class="cod">A8</span> · matriz de casos</p>
+    <p>Monte uma tabela com oito linhas (casos) e quatro colunas: <em>L1 Anexo 14</em>, <em>L2 Anexo IV</em>, <em>L3 doenças plausíveis</em>, <em>Informação que falta</em>. Preencha a linha de cada caso <strong>antes</strong> de marcar as alternativas. Depois, corrija com outra cor.</p>
+    <label class="anotei"><input type="checkbox" data-key="A8"> Anotei</label>
+  </div>
+
+  <div id="casos" style="display:flex;flex-direction:column;gap:10px"></div>
+
+  <div class="alerta">
+    <p class="rot">Padrão que você deve ter percebido</p>
+    <p>O magarefe (caso 8) mostra as lentes em desacordo: sem insalubridade biológica e sem enquadramento no 3.0.1, mas com doença ocupacional plausível. O agente de endemias (caso 6) mostra o inverso. Descrever bem a tarefa real é o que permite responder às três perguntas.</p>
+  </div>
+
+  <div class="nav"><button class="btn sec" data-ir="4">← Estação 4</button><button class="btn" data-ir="6">Ir para a Estação 6 →</button></div>
+</section>
+
+<!-- ===================== ESTAÇÃO 6 ===================== -->
+<section class="estacao" data-titulo="Parecer" id="e6" hidden>
+  <div class="est-cab">
+    <p class="eyebrow">Estação 6 · Produto final · cerca de 90 min</p>
+    <h2>Parecer técnico integrado</h2>
+    <p class="meta">Você vai aplicar as três lentes a um ambiente real, fechar o caso-âncora e voltar ao diagnóstico que fez no início.</p>
+  </div>
+
+  <div class="texto">
+    <p>O ambiente abaixo é fictício, mas foi montado com situações comuns em serviços de saneamento. Leia a ficha como leria as anotações de uma visita de campo: sublinhe o que é relevante e anote o que falta.</p>
+  </div>
+
+  <div class="ficha">
+    <h4>Ficha de visita · Estação de Tratamento de Esgoto Rio Claro (fictícia)</h4>
+    <dl>
+      <dt>Empresa</dt><dd>Concessionária de saneamento, 180 empregados na unidade.</dd>
+      <dt>Posto avaliado</dt><dd>Operador de ETE (6 trabalhadores, turnos de 12 × 36 horas).</dd>
+      <dt>Tarefas</dt><dd>Limpeza diária do gradeamento e da caixa de areia (remoção manual de sólidos com rastelo); coleta de amostras de esgoto bruto e tratado a cada 2 horas; inspeção e desobstrução de bombas no poço de sucção, cerca de 3 vezes por semana; leituras em painel de controle na sala de operação (cerca de 40% do turno).</dd>
+      <dt>Ocorrências</dt><dd>Dois casos de leptospirose confirmados nos últimos 3 anos entre operadores. Relatos frequentes de respingos no rosto durante a desobstrução de bombas. Presença de roedores no pátio.</dd>
+      <dt>Controles existentes</dt><dd>Luvas de PVC cano longo e botas; óculos disponíveis, mas uso não fiscalizado; não há lavatório próximo ao gradeamento; vacinação contra hepatite A e tétano não verificada; controle de roedores terceirizado, sem registro de frequência.</dd>
+      <dt>Documentos</dt><dd>PGR com inventário que descreve o risco como “biológico — vírus e bactérias”. LTCAT de 2019. Adicional de insalubridade pago em grau médio.</dd>
+    </dl>
+  </div>
+
+  <div class="caderno" data-bloco="A9">
+    <p class="rot">Caderno · <span class="cod">A9</span> · parecer técnico (entregável)</p>
+    <p>Redija o parecer no caderno, com estas seções:</p>
+    <ol>
+      <li><strong>Identificação e método:</strong> posto, trabalhadores, fontes consultadas, visita.</li>
+      <li><strong>Descrição da exposição:</strong> tarefas, frequência, vias de exposição, agentes prováveis (use o vocabulário da Lista B).</li>
+      <li><strong>L1 · Insalubridade:</strong> enquadramento no Anexo 14, grau, fundamento. O pagamento em grau médio está correto?</li>
+      <li><strong>L2 · Tempo especial:</strong> enquadramento no 3.0.1, alínea, discussão sobre permanência (os 40% do turno na sala de controle afastam o enquadramento?) e sobre a eficácia dos EPI.</li>
+      <li><strong>L3 · Doenças ocupacionais:</strong> doenças plausíveis com CID; análise dos dois casos de leptospirose; o que deveria ter sido registrado.</li>
+      <li><strong>Falhas documentais:</strong> o que está inadequado no inventário do PGR e no LTCAT.</li>
+      <li><strong>Medidas de controle:</strong> hierarquia (eliminação, engenharia, administrativas, EPI), com prioridade.</li>
+    </ol>
+    <label class="anotei"><input type="checkbox" data-key="A9"> Terminei o parecer</label>
+  </div>
+
+  <div class="atividade">
+    <p class="rot">Autoavaliação do parecer</p>
+    <p>Marque o que o seu texto contém. Os itens não marcados indicam o que revisar.</p>
+    <div class="opc" id="checklist"></div>
+    <p id="checkRes" class="fb" hidden></p>
+    <button class="btn sec" id="verPontos">Ver pontos-chave esperados</button>
+    <div id="pontos" class="resp" hidden>
+      <p class="rot2">Pontos-chave esperados</p>
+      <ul class="lista">
+        <li><strong>L1:</strong> contato com esgoto em tanques e na caixa de areia enquadra-se em “esgotos (galerias e tanques)”, <strong>grau máximo</strong>. O pagamento em grau médio está, em princípio, incorreto. A permanência do contato deve ser descrita, lembrando a Súmula 47.</li>
+        <li><strong>L2:</strong> alínea e) do 3.0.1 (tanques de esgoto). O período na sala de controle não afasta por si só o enquadramento, porque a exposição é indissociável das tarefas diárias (Tema 211). Luvas e botas não neutralizam respingos em mucosas nem a exposição por inalação de aerossóis; óculos sem uso fiscalizado geram dúvida razoável sobre eficácia (Tema 1090).</li>
+        <li><strong>L3:</strong> leptospirose (A27), hepatite A (B15), tétano (A35) em ferimentos; os dois casos de leptospirose deveriam ter CAT e investigação do evento-sentinela.</li>
+        <li><strong>Documentos:</strong> inventário genérico (“vírus e bactérias”) não identifica agentes, vias nem tarefas; LTCAT desatualizado e incompatível com as ocorrências.</li>
+        <li><strong>Controles:</strong> controle de roedores com registro; lavatório junto ao gradeamento; mecanização da limpeza do gradeamento; protetor facial na desobstrução; vacinação contra hepatite A e tétano no PCMSO; procedimento pós-exposição.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Fechamento do caso-âncora</h3>
+  <div class="caderno" data-bloco="A10">
+    <p class="rot">Caderno · <span class="cod">A10</span> · de volta a Márcia</p>
+    <ol>
+      <li>Responda de novo às quatro perguntas de A1, agora com fundamento legal para cada resposta.</li>
+      <li>Compare com o que você escreveu no início. Qual foi a mudança mais importante no seu raciocínio?</li>
+      <li>Liste três medidas que teriam evitado o caso. Relacione-as à NR-32 (dispositivos de segurança em perfurocortantes, limite de enchimento dos coletores, imunização contra hepatite B) e ao inventário de riscos do PGR.</li>
+    </ol>
+    <label class="anotei"><input type="checkbox" data-key="A10"> Anotei</label>
+  </div>
+
+  <button class="btn sec" id="verMarcia">Ver respostas comentadas do caso Márcia</button>
+  <div id="marcia" class="resp" hidden>
+    <ul class="lista">
+      <li><strong>L1:</strong> grau médio (contato permanente com pacientes em enfermaria). Seria grau máximo se atuasse de forma permanente com pacientes em isolamento.</li>
+      <li><strong>L2:</strong> Anexo IV, 3.0.1, alínea a. O contato com sangue e pacientes é indissociável da função (Tema 211). Luvas não neutralizam o risco perfurocortante.</li>
+      <li><strong>L3:</strong> hepatite B (B16) consequente a acidente típico. A CAT deveria ter sido emitida no dia da perfuração, com protocolo pós-exposição. O afastamento superior a 15 dias gera benefício acidentário e estabilidade provisória após o retorno.</li>
+      <li><strong>Assinaturas:</strong> laudo de insalubridade e LTCAT por médico do trabalho ou engenheiro de segurança do trabalho; nexo previdenciário pela perícia médica federal; CAT pelo empregador (ou, na omissão, pela própria trabalhadora, sindicato, médico ou autoridade pública).</li>
+    </ul>
+  </div>
+
+  <div class="conceito">
+    <p class="rot">Para levar</p>
+    <p>O adicional de insalubridade e a aposentadoria especial compensam uma exposição que não foi controlada. Nenhum dos dois protege o trabalhador. A tarefa principal do higienista é produzir uma descrição da exposição tão precisa que sirva, ao mesmo tempo, às três lentes e ao controle do risco.</p>
+  </div>
+
+  <div class="nav"><button class="btn sec" data-ir="5">← Estação 5</button><button class="btn" id="concluir">Concluir a trilha ✓</button></div>
+  <p id="fim" class="fb certo" hidden><b>Trilha concluída.</b> Leve o caderno com o parecer (A9) e o Quadro das três lentes para o próximo encontro.</p>
+</section>
+
+</main>
+<footer class="wrap rodape">
+  <p>Material didático. Os trechos normativos foram transcritos das fontes oficiais ou resumidos quando indicado; confira a redação vigente antes de citar em documento técnico. Casos e valores são fictícios.</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var LS = "tresLentes_v1";
+  var estado = {est:0, feitas:{}, notas:{}, chk:{}};
+  try { var s = localStorage.getItem(LS); if (s) { var o = JSON.parse(s); for (var k in o) estado[k] = o[k]; } } catch(e) {}
+  function salvar(){ try { localStorage.setItem(LS, JSON.stringify(estado)); } catch(e) {} }
+
+  var secs = Array.prototype.slice.call(document.querySelectorAll(".estacao"));
+  var chips = document.getElementById("chips");
+
+  /* ---------- Navegação ---------- */
+  secs.forEach(function(s, i){
+    var b = document.createElement("button");
+    b.className = "chip"; b.type = "button";
+    b.innerHTML = '<span class="n">' + i + '</span>' + s.getAttribute("data-titulo");
+    b.addEventListener("click", function(){ ir(i); });
+    chips.appendChild(b);
+  });
+  function atualizaChips(){
+    var bs = chips.querySelectorAll(".chip");
+    var n = 0;
+    bs.forEach(function(b, i){
+      if (i === estado.est) b.setAttribute("aria-current","step"); else b.removeAttribute("aria-current");
+      b.classList.toggle("feita", !!estado.feitas[i]);
+      if (estado.feitas[i]) n++;
+    });
+    document.getElementById("barraProg").style.width = (n / secs.length * 100) + "%";
+    var at = bs[estado.est]; if (at && at.scrollIntoView) { try { at.scrollIntoView({block:"nearest", inline:"center"}); } catch(e){} }
+  }
+  function ir(i, rolar){
+    if (i < 0 || i >= secs.length) return;
+    if (i > estado.est) estado.feitas[estado.est] = true;
+    estado.est = i;
+    secs.forEach(function(s, j){ s.hidden = j !== i; });
+    atualizaChips(); salvar();
+    if (rolar !== false) window.scrollTo({top:0, behavior:"smooth"});
+  }
+  document.querySelectorAll("[data-ir]").forEach(function(b){
+    b.addEventListener("click", function(){ ir(parseInt(b.getAttribute("data-ir"),10)); });
+  });
+  document.getElementById("concluir").addEventListener("click", function(){
+    estado.feitas[6] = true; salvar(); atualizaChips();
+    document.getElementById("fim").hidden = false;
+  });
+
+  /* ---------- Caderno ---------- */
+  document.querySelectorAll(".anotei input").forEach(function(c){
+    var k = c.getAttribute("data-key");
+    c.checked = !!estado.notas[k];
+    c.addEventListener("change", function(){ estado.notas[k] = c.checked; salvar(); });
+  });
+
+  /* ---------- Questões de múltipla escolha ---------- */
+  var ROT = {certo:"Correto.", parcial:"Quase.", errado:"Revise."};
+  function ligaOpcoes(root){
+    root.querySelectorAll(".opc").forEach(function(opc){
+      var labels = opc.querySelectorAll(":scope > label[data-v]");
+      labels.forEach(function(l){
+        var inp = l.querySelector("input");
+        if (!inp || inp.type !== "radio") return;
+        inp.addEventListener("change", function(){
+          labels.forEach(function(o){
+            o.classList.remove("sel","certo","parcial","errado");
+            var fb = o.nextElementSibling; if (fb && fb.classList.contains("fb")) fb.hidden = true;
+          });
+          var v = l.getAttribute("data-v");
+          l.classList.add("sel", v);
+          var fb = l.nextElementSibling; if (fb && fb.classList.contains("fb")) fb.hidden = false;
+        });
+      });
+    });
+  }
+
+  function montaQuestao(nome, enun, opcoes){
+    var h = '<div class="q"><p class="enun">' + enun + '</p><div class="opc">';
+    opcoes.forEach(function(o){
+      h += '<label data-v="' + o[0] + '"><input type="radio" name="' + nome + '"> <span>' + o[1] + '</span></label>';
+      h += '<div class="fb ' + o[0] + '" hidden><b>' + ROT[o[0]] + '</b> ' + o[2] + '</div>';
+    });
+    return h + '</div></div>';
+  }
+
+  /* ---------- Atividade 1.1: associação ---------- */
+  var DOENCAS = ["Brucelose","Leptospirose","Hepatite B","Dermatofitose","Paracoccidioidomicose","Psitacose","Tétano","Tuberculose"];
+  var ASSOC = [
+    ["Trabalhador de galeria de águas pluviais com presença de roedores.","Leptospirose"],
+    ["Técnica de laboratório de microbiologia que manipula escarro de pacientes com baciloscopia positiva.","Tuberculose"],
+    ["Ordenhador e queijeiro em laticínio artesanal.","Brucelose"],
+    ["Tratador em criadouro comercial de papagaios e periquitos.","Psitacose"],
+    ["Cozinheiro de restaurante industrial, calor e umidade constantes, lesões interdigitais nos pés.","Dermatofitose"],
+    ["Servente de obra que perfurou o pé com prego enferrujado.","Tétano"],
+    ["Trabalhador rural em lavoura de café recém-aberta em área de mata.","Paracoccidioidomicose"],
+    ["Coletor de sangue de hemocentro após acidente com agulha.","Hepatite B"]
+  ];
+  var assocEl = document.getElementById("assoc1");
+  ASSOC.forEach(function(a, i){
+    var d = document.createElement("div"); d.className = "assoc-item";
+    var opts = '<option value="">Escolha…</option>' + DOENCAS.map(function(x){ return '<option>' + x + '</option>'; }).join("");
+    d.innerHTML = '<label for="as' + i + '">' + a[0] + '</label><select id="as' + i + '" data-r="' + a[1] + '">' + opts + '</select>';
+    assocEl.appendChild(d);
+  });
+  document.getElementById("checaAssoc1").addEventListener("click", function(){
+    var ok = 0;
+    assocEl.querySelectorAll(".assoc-item").forEach(function(it){
+      var s = it.querySelector("select");
+      var c = s.value === s.getAttribute("data-r");
+      it.classList.toggle("ok", c); it.classList.toggle("no", !c);
+      if (c) ok++;
+    });
+    var r = document.getElementById("assoc1Res");
+    r.hidden = false;
+    r.className = "fb " + (ok === ASSOC.length ? "certo" : ok >= 5 ? "parcial" : "errado");
+    r.innerHTML = "<b>" + ok + " de " + ASSOC.length + " corretas.</b> " + (ok === ASSOC.length
+      ? "Registre em A3 quais exposições descrevem um evento agudo e quais descrevem exposição contínua."
+      : "Volte à tabela da Lista B e confira a coluna de exposição das linhas marcadas em vermelho.");
+  });
+
+  /* ---------- Atividade 2.1: enquadramento literal ---------- */
+  var ENQ = [
+    ["q21a","Enfermeira que trabalha de forma permanente na unidade de isolamento de doenças infectocontagiosas.",[
+      ["certo","Grau máximo.","Hipótese expressa: contato permanente com pacientes em isolamento."],
+      ["errado","Grau médio.","O isolamento é justamente o que eleva ao grau máximo."],
+      ["errado","Não enquadrado.","A situação está literalmente no anexo."]]],
+    ["q21b","Recepcionista de ambulatório, que cadastra pacientes no balcão.",[
+      ["errado","Grau máximo.","Não há isolamento nem as demais hipóteses de grau máximo."],
+      ["parcial","Grau médio.","Leitura possível, mas frágil: o anexo restringe o grau médio ao pessoal que tem contato com os pacientes, e o contato de balcão não é assistencial. A jurisprudência diverge; o laudo precisa descrever o contato real."],
+      ["certo","Em princípio, não enquadrado.","A restrição “aplica-se unicamente ao pessoal que tenha contato com os pacientes” costuma ser lida como contato assistencial. É a leitura literal mais defensável, mas o caso é controverso."]]],
+    ["q21c","Tratador de bovinos em fazenda de gado de corte saudável, com vacinação em dia.",[
+      ["errado","Grau máximo.","O grau máximo exige animais portadores de doenças infectocontagiosas."],
+      ["certo","Grau médio.","“Estábulos e cavalariças” está no grau médio, independentemente de doença diagnosticada nos animais, desde que o contato seja permanente."],
+      ["errado","Não enquadrado.","Releia o final da lista de grau médio."]]],
+    ["q21d","Técnico de necropsia em serviço de verificação de óbitos.",[
+      ["errado","Grau máximo.","Gabinetes de autópsia estão no grau médio."],
+      ["certo","Grau médio.","“Gabinetes de autópsias… aplica-se somente ao pessoal técnico.”"],
+      ["errado","Não enquadrado.","A hipótese está literalmente no anexo."]]],
+    ["q21e","Gari de varrição de vias públicas, que recolhe detritos do chão.",[
+      ["parcial","Grau máximo.","Há decisões que equiparam a varrição à coleta de lixo urbano, mas o texto fala em coleta e industrialização. O perito precisa justificar a equiparação."],
+      ["errado","Grau médio.","Não há hipótese de grau médio compatível."],
+      ["certo","Literalmente, não enquadrado; a equiparação à coleta de lixo urbano é tese jurisprudencial.","Diferencie no laudo o que é texto e o que é interpretação. A jurisprudência tem oscilado neste ponto."]]]
+  ];
+  var enqEl = document.getElementById("enq21");
+  ENQ.forEach(function(q){ enqEl.insertAdjacentHTML("beforeend", montaQuestao(q[0], q[1], q[2])); });
+  enqEl.style.display = "flex"; enqEl.style.flexDirection = "column"; enqEl.style.gap = "18px";
+
+  /* ---------- Atividade 3.1: comparação ---------- */
+  var COMP = [
+    ["Pacientes em isolamento e objetos de seu uso", true, "a) estabelecimentos de saúde, pacientes com doenças infectocontagiosas"],
+    ["Carnes, vísceras, sangue etc. de animais portadores de doenças infectocontagiosas", true, "b) animais infectados, e d) resíduos de animais deteriorados, cobrem parte da hipótese"],
+    ["Esgotos (galerias e tanques)", true, "e) galerias, fossas e tanques de esgoto"],
+    ["Lixo urbano (coleta e industrialização)", true, "g) coleta e industrialização do lixo"],
+    ["Hospitais e estabelecimentos de saúde humana (contato com pacientes)", true, "a), com a ressalva de que o 3.0.1 fala em pacientes com doenças infectocontagiosas ou material contaminado"],
+    ["Estabelecimentos de atendimento a animais (clínicas veterinárias)", false, "sem correspondente direto; o 3.0.1 exige animais infectados"],
+    ["Laboratórios com animais para soro e vacinas", true, "b) preparo de soro, vacinas e outros produtos"],
+    ["Laboratórios de análise clínica e histopatologia", false, "sem correspondente literal; o 3.0.1 cita laboratórios de autópsia, anatomia e anátomo-histologia"],
+    ["Gabinetes de autópsia, anatomia e histoanatomopatologia", true, "c) laboratórios de autópsia, de anatomia e anátomo-histologia"],
+    ["Cemitérios (exumação de corpos)", true, "d) exumação de corpos"],
+    ["Estábulos e cavalariças", false, "sem correspondente"],
+    ["Resíduos de animais deteriorados", true, "d) manipulação de resíduos de animais deteriorados"]
+  ];
+  var compEl = document.getElementById("comp31");
+  COMP.forEach(function(c, i){
+    compEl.insertAdjacentHTML("beforeend", '<label><input type="checkbox" id="c31_' + i + '"> <span>' + c[0] + '</span></label>');
+  });
+  document.getElementById("checaComp31").addEventListener("click", function(){
+    var ok = 0, h = '<div class="tab"><table><thead><tr><th>Hipótese do Anexo 14</th><th>No 3.0.1?</th><th>Correspondência</th><th>Sua marcação</th></tr></thead><tbody>';
+    COMP.forEach(function(c, i){
+      var m = document.getElementById("c31_" + i).checked;
+      if (m === c[1]) ok++;
+      h += '<tr><td>' + c[0] + '</td><td class="' + (c[1] ? 'sim' : 'nao') + '">' + (c[1] ? 'Sim' : 'Não') + '</td><td>' + c[2] + '</td><td>' + (m === c[1] ? '✓' : '✗') + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+    h += '<p><strong>' + ok + ' de ' + COMP.length + ' acertos.</strong> Anote em A6: o que ficou fora do 3.0.1 (clínicas veterinárias, análises clínicas, estábulos) pode gerar adicional de insalubridade sem gerar tempo especial pela lista, embora o Tema 205 admita prova em concreto.</p>';
+    var r = document.getElementById("comp31Res"); r.innerHTML = h; r.hidden = false;
+  });
+
+  /* ---------- FAP ---------- */
+  var fmt = function(v){ return v.toLocaleString("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0}); };
+  function calc(){
+    var folha = parseFloat(document.getElementById("fFolha").value) || 0;
+    var rat = parseFloat(document.getElementById("fRat").value) || 0;
+    var fap = parseFloat(document.getElementById("fFap").value);
+    if (isNaN(fap)) fap = 1;
+    fap = Math.min(2, Math.max(0.5, fap));
+    var aliq = rat * fap;
+    var anual = folha * aliq / 100 * 13;
+    var base = folha * rat / 100 * 13;
+    document.getElementById("oAliq").textContent = aliq.toLocaleString("pt-BR",{maximumFractionDigits:2}) + "%";
+    document.getElementById("oAnual").textContent = fmt(anual);
+    var d = anual - base;
+    document.getElementById("oDif").textContent = (d >= 0 ? "+" : "−") + fmt(Math.abs(d));
+  }
+  ["fFolha","fRat","fFap"].forEach(function(id){ document.getElementById(id).addEventListener("input", calc); });
+  calc();
+
+  /* ---------- Estação 5: casos ---------- */
+  var CASOS = [
+    {t:"Coletor de lixo domiciliar", c:"Trabalha na traseira do caminhão compactador, recolhendo sacos de lixo residencial durante toda a jornada. Relata cortes frequentes por vidro e contato com chorume.",
+     q:[
+      ["Anexo 14",[["certo","Grau máximo: lixo urbano (coleta).","Hipótese literal e típica."],["errado","Grau médio.","Coleta de lixo urbano está no grau máximo."],["errado","Não enquadrado.","A coleta de lixo urbano está expressamente listada."]]],
+      ["Anexo IV, 3.0.1",[["certo","Sim, alínea g.","“Coleta e industrialização do lixo.” A exposição é indissociável da tarefa."],["errado","Não, porque usa luvas.","Luvas não neutralizam cortes por vidro nem contato com chorume em outras partes do corpo; há dúvida razoável sobre a eficácia."]]],
+      ["Doenças plausíveis (Lista B)",[["certo","Leptospirose, tétano, hepatite A.","Chorume e roedores (leptospirose), ferimentos (tétano), contato fecal-oral (hepatite A)."],["parcial","Somente tétano.","O tétano é plausível pelos cortes, mas a leptospirose é o risco mais característico da coleta."]]]]},
+    {t:"Técnica de enfermagem em UTI geral", c:"Presta assistência direta a pacientes críticos, com procedimentos invasivos, aspiração de secreções e manuseio de cateteres. Alguns pacientes ficam em precaução de contato, mas a unidade não é de isolamento.",
+     q:[
+      ["Anexo 14",[["parcial","Grau máximo.","Seria o caso se o contato permanente fosse com pacientes em isolamento por doença infectocontagiosa. Precaução de contato em UTI geral é discutível; descreva a proporção real."],["certo","Grau médio.","Contato permanente com pacientes em estabelecimento de saúde. O laudo deve registrar se há leitos de isolamento e com que frequência ela os atende."],["errado","Não enquadrado.","A hipótese de grau médio é literal."]]],
+      ["Anexo IV, 3.0.1",[["certo","Sim, alínea a.","Assistência a pacientes com doenças infectocontagiosas e manuseio de material contaminado, de forma indissociável (Tema 211)."],["errado","Não, porque nem todos os pacientes têm doenças infecciosas.","O Tema 211 exige probabilidade de exposição indissociável da atividade, e não que todo paciente esteja infectado."]]],
+      ["Doenças plausíveis (Lista B)",[["certo","Hepatites B e C, HIV, tuberculose.","Perfurocortantes e fluidos (HBV, HCV, HIV) e aerossóis em aspiração (tuberculose)."],["errado","Candidíase e dermatofitose.","São possíveis, mas não são as doenças características da assistência em UTI."]]]]},
+    {t:"Recepcionista de pronto-socorro", c:"Faz a ficha de atendimento de todos os pacientes que chegam, a cerca de um metro, atrás de balcão. Não toca em pacientes nem manuseia materiais.",
+     q:[
+      ["Anexo 14",[["errado","Grau médio, por trabalhar em serviço de emergência.","O anexo restringe o grau médio ao pessoal que tem contato com os pacientes ou manuseia seus objetos."],["certo","Em princípio, não enquadrado; o caso é controverso.","O contato de balcão não é assistencial. Há decisões nos dois sentidos, e a exposição a aerossóis (tuberculose) é argumento a favor. O laudo precisa descrever distância, barreiras e ventilação."]]],
+      ["Anexo IV, 3.0.1",[["certo","Improvável.","Pelo Tema 211, a exposição precisa ser indissociável da atividade. A atividade dela é administrativa; o risco é real, mas não diferente do de outros ambientes públicos, salvo prova em concreto."],["errado","Sim, alínea a.","A alínea a pressupõe contato com pacientes ou manuseio de material contaminado."]]],
+      ["Doenças plausíveis (Lista B)",[["certo","Tuberculose, se houver exposição documentada a paciente bacilífero.","A transmissão aérea torna a tuberculose a hipótese mais relevante; a investigação de contatos é o que documenta o nexo."],["errado","Hepatite B.","Sem contato com sangue ou perfurocortante, a hepatite B não é plausível."]]]]},
+    {t:"Operador de estação elevatória de esgoto", c:"Faz a limpeza diária do gradeamento e desobstrui bombas no poço de sucção, com contato direto com esgoto bruto.",
+     q:[
+      ["Anexo 14",[["certo","Grau máximo: esgotos (galerias e tanques).","O contato com esgoto em tanques e poços é a hipótese literal."],["errado","Grau médio.","Esgoto está no grau máximo."]]],
+      ["Anexo IV, 3.0.1",[["certo","Sim, alínea e.","“Trabalhos em galerias, fossas e tanques de esgoto.”"],["errado","Somente se ficar dentro do tanque o dia inteiro.","O Tema 211 dispensa tempo mínimo durante a jornada quando a exposição é inerente à tarefa."]]],
+      ["Doenças plausíveis (Lista B)",[["certo","Leptospirose e hepatites virais (A e E).","A Lista B cita esgotos e águas usadas nas duas doenças."],["parcial","Somente leptospirose.","Faltam as hepatites de transmissão fecal-oral."]]]]},
+    {t:"Auxiliar de limpeza de sanitários de shopping center", c:"Limpa e recolhe o lixo de seis conjuntos de sanitários usados por milhares de pessoas por dia.",
+     q:[
+      ["Anexo 14",[["parcial","Grau máximo, por enquadramento literal.","O anexo não cita limpeza de sanitários. O grau máximo vem da Súmula 448, II, que equipara essa limpeza à coleta de lixo urbano."],["certo","Grau máximo, pela Súmula 448, II, que equipara à coleta de lixo urbano.","É a jurisprudência consolidada do TST. No laudo, descreva o uso público de grande circulação e diga que o grau decorre dessa equiparação."],["errado","Não enquadrado.","Ignora a jurisprudência consolidada, que seria aplicada em eventual processo."]]],
+      ["Anexo IV, 3.0.1",[["certo","Não pela lista; possível apenas com prova em concreto (Tema 205).","A súmula trabalhista não vale para a Previdência. O rol é exemplificativo, mas exige demonstrar risco superior ao geral."],["errado","Sim, alínea g, porque é coleta de lixo.","A equiparação é criação da jurisprudência trabalhista; não se transfere automaticamente para o 3.0.1."]]],
+      ["Doenças plausíveis (Lista B)",[["certo","Hepatite A e, com ferimentos, tétano.","Contato fecal-oral e eventuais perfurocortantes descartados em lixeiras."],["errado","Brucelose.","Não há exposição a animais."]]]]},
+    {t:"Agente de combate a endemias com dengue", c:"Faz visitas domiciliares em área de alta transmissão, inspeciona e trata criadouros de Aedes aegypti. Contraiu dengue durante uma epidemia na cidade onde mora e trabalha.",
+     q:[
+      ["Anexo 14",[["certo","Não enquadrado.","O anexo não lista trabalho de campo com vetores. Eventual insalubridade viria de outros agentes (químicos dos larvicidas, calor)."],["errado","Grau médio, por analogia a postos de vacinação.","A analogia é forçada: não há contato com pacientes nem material infecto-contagiante."]]],
+      ["Anexo IV, 3.0.1",[["certo","Não pela lista; discutível pelo Tema 205.","Seria preciso demonstrar risco de exposição superior ao da população. É argumentável, mas não é enquadramento de lista."],["errado","Sim, alínea a.","Ele não trabalha em estabelecimento de saúde."]]],
+      ["Doença ocupacional?",[["certo","Pode ser reconhecida: a natureza do trabalho determina a exposição ao vetor.","A exceção da doença endêmica (art. 20, § 1º, d) é afastada quando a exposição decorre da natureza do trabalho, e a Lista B cita trabalhos de saúde pública. Compare com um auxiliar administrativo da prefeitura na mesma cidade."],["errado","Não, porque dengue é endêmica e ele mora na cidade.","Essa leitura ignora a ressalva final da alínea d."]]]]},
+    {t:"Técnico de laboratório de pesquisa em micobactérias", c:"Manipula culturas de M. tuberculosis em cabine de segurança biológica, em laboratório universitário de nível de biossegurança 3.",
+     q:[
+      ["Anexo 14",[["certo","Não há enquadramento literal; enquadramento por analogia exige fundamentação.","Pesquisa não é análise clínica. É a lacuna vista na Estação 2."],["parcial","Grau médio, como laboratório de análise clínica.","Muitos peritos adotam essa analogia. Não está errada, mas precisa ser declarada como interpretação."]]],
+      ["Anexo IV, 3.0.1",[["certo","Possível pelo Tema 205, com prova em concreto do risco.","Não há alínea literal, mas o rol é exemplificativo e o risco é claramente superior ao geral."],["errado","Não, porque a cabine de segurança elimina o risco.","A cabine reduz o risco, mas acidentes com derramamento e falhas de procedimento continuam possíveis; neutralização precisa ser demonstrada."]]],
+      ["Doenças plausíveis (Lista B)",[["certo","Tuberculose.","A Lista B cita expressamente laboratórios de biologia."],["errado","Paracoccidioidomicose.","Não há exposição ao agente."]]]]},
+    {t:"Magarefe em frigorífico sob inspeção sanitária", c:"Faz a evisceração de bovinos abatidos, todos inspecionados pelo serviço oficial. Contato constante com sangue e vísceras.",
+     q:[
+      ["Anexo 14",[["errado","Grau máximo: vísceras e sangue de animais.","O grau máximo exige animais portadores de doenças infectocontagiosas. Animais inspecionados e sadios não se enquadram."],["certo","Em princípio, não enquadrado por agente biológico.","A insalubridade no frigorífico costuma vir do frio e do ruído. Se houver abate sanitário de animais doentes, o quadro muda."]]],
+      ["Anexo IV, 3.0.1",[["certo","Em princípio, não.","A alínea b exige animais infectados; a d, resíduos deteriorados."],["errado","Sim, alínea b.","Os animais não são infectados nem destinados a soros e vacinas."]]],
+      ["Doenças plausíveis (Lista B)",[["certo","Brucelose e, com cortes, tétano.","A Lista B cita abatedouros e frigoríficos para brucelose. A inspeção reduz, mas não elimina, animais com infecção subclínica."],["errado","Nenhuma, porque os animais são sadios.","A Lista B descreve a atividade, não o estado sanitário do lote."]]]]}
+  ];
+  var casosEl = document.getElementById("casos");
+  CASOS.forEach(function(k, i){
+    var h = '<details class="caso"><summary><span class="num">Caso ' + (i+1) + '</span><span class="tit">' + k.t + '</span><span class="st" id="st' + i + '">0/3</span></summary><div class="caso-corpo"><p class="cenario">' + k.c + '</p>';
+    k.q.forEach(function(q, j){ h += montaQuestao("c" + i + "_" + j, (j+1) + ". " + q[0], q[1]); });
+    h += '</div></details>';
+    casosEl.insertAdjacentHTML("beforeend", h);
+  });
+  casosEl.addEventListener("change", function(ev){
+    var t = ev.target; if (!t || t.type !== "radio") return;
+    var m = /^c(\d+)_/.exec(t.name); if (!m) return;
+    var i = m[1], n = 0;
+    for (var j = 0; j < 3; j++) if (casosEl.querySelector('input[name="c' + i + '_' + j + '"]:checked')) n++;
+    document.getElementById("st" + i).textContent = n + "/3";
+  });
+
+  /* ---------- Checklist do parecer ---------- */
+  var CHK = [
+    "Descrevi tarefas, frequência e vias de exposição, e não apenas “risco biológico”.",
+    "Nomeei agentes prováveis com o vocabulário da Lista B e os CID.",
+    "Enquadrei no Anexo 14 com o texto da hipótese e indiquei o grau.",
+    "Discuti se o pagamento em grau médio está correto.",
+    "Enquadrei no 3.0.1 com a alínea e discuti permanência pelo Tema 211.",
+    "Avaliei a eficácia dos EPI com base na via de exposição, e não na simples existência do EPI.",
+    "Analisei os dois casos de leptospirose como eventos-sentinela e indiquei a CAT.",
+    "Apontei as falhas do inventário do PGR e do LTCAT.",
+    "Propus medidas seguindo a hierarquia de controle, com prioridade.",
+    "Separei claramente o que é texto normativo e o que é jurisprudência."
+  ];
+  var chkEl = document.getElementById("checklist");
+  CHK.forEach(function(c, i){
+    chkEl.insertAdjacentHTML("beforeend", '<label><input type="checkbox" id="chk' + i + '"' + (estado.chk[i] ? " checked" : "") + '> <span>' + c + '</span></label>');
+  });
+  function contaChk(){
+    var n = 0; CHK.forEach(function(_, i){ if (document.getElementById("chk" + i).checked) n++; });
+    var r = document.getElementById("checkRes");
+    if (n === 0) { r.hidden = true; return; }
+    r.hidden = false;
+    r.className = "fb " + (n === CHK.length ? "certo" : n >= 7 ? "parcial" : "errado");
+    r.innerHTML = "<b>" + n + " de " + CHK.length + " itens.</b> " + (n === CHK.length ? "Parecer completo. Compare com os pontos-chave." : "Revise os itens em aberto antes de comparar com os pontos-chave.");
+  }
+  chkEl.addEventListener("change", function(ev){
+    var m = /^chk(\d+)$/.exec(ev.target.id || ""); if (!m) return;
+    estado.chk[m[1]] = ev.target.checked; salvar(); contaChk();
+  });
+  contaChk();
+
+  function alterna(btnId, alvoId, abrir, fechar){
+    var b = document.getElementById(btnId), a = document.getElementById(alvoId);
+    b.addEventListener("click", function(){ a.hidden = !a.hidden; b.textContent = a.hidden ? abrir : fechar; });
+  }
+  alterna("verPontos","pontos","Ver pontos-chave esperados","Ocultar pontos-chave");
+  alterna("verMarcia","marcia","Ver respostas comentadas do caso Márcia","Ocultar respostas comentadas");
+
+  ligaOpcoes(document);
+  ir(estado.est || 0, false);
+})();
+</script>
+
+</body>
+</html>
